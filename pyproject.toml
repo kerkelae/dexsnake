@@ -1,4 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
-name = "dexsnake"
+name = "Dexsnake"
 version = "0.0.1"
 dependencies = ["web3"]
+authors = [
+  { name="Leevi Kerkelä", email="leevi.kerkela@protonmail.com" },
+]
+description = "A Python package for trading on decentralized exchanges like Uniswap."
+readme = "README.rst"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/kerkelae/dexsnake"
