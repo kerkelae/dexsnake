@@ -22,7 +22,7 @@ copyright = "2024, Leevi Kerkelä"
 author = "Leevi Kerkelä"
 
 # The full version, including alpha/beta/rc tags
-release = "0.1dev"
+# release = "0.0.1"
 
 
 # -- General configuration ---------------------------------------------------
