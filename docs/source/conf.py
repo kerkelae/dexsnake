@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "dexsnake"
+project = "Dexsnake"
 copyright = "2024, Leevi Kerkelä"
 author = "Leevi Kerkelä"
 
