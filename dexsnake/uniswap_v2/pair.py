@@ -1,3 +1,4 @@
+from decimal import Decimal
 import json
 import math
 import os
@@ -62,28 +63,28 @@ class UniswapV2Pair:
             )
         return self._token_1
 
-    def get_reserves(self) -> Tuple[float, float]:
+    def get_reserves(self) -> Tuple[Decimal, Decimal]:
         """
         Returns the current reserves of ``token_0`` and ``token_1`` after taking into
         account the token decimals.
 
         :return: A tuple containing the pair's current reserves.
-        :rtype: Tuple[float, float]
+        :rtype: Tuple[``Decimal``, ``Decimal``]
         """
         reserve_0, reserve_1, _ = (
             self.contract.functions.getReserves().call()
         )  # the third element is the timestamp when the reserves were last updated
         return (
-            reserve_0 / 10**self.token_0.decimals,
-            reserve_1 / 10**self.token_1.decimals,
+            Decimal(reserve_0) / Decimal(10**self.token_0.decimals),
+            Decimal(reserve_1) / Decimal(10**self.token_1.decimals),
         )
 
-    def get_price(self) -> float:
+    def get_price(self) -> Decimal:
         """
         Returns the current price of ``token_0`` denominated in ``token_1``.
 
         :return: The pair's current price.
-        :rtype: float
+        :rtype: ``Decimal``
         """
         reserve_0, reserve_1 = self.get_reserves()
         if reserve_0 == 0:
