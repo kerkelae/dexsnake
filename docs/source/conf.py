@@ -77,9 +77,8 @@ html_theme_options = {
 
 autoclass_content = "both"
 
-# use default style since the styles below didn't work on readthedocs
-# pygments_style = "stata-light"
-# pygments_dark_style = "stata-dark"
+pygments_style = "stata-light"
+pygments_dark_style = "stata-dark"
 
 # Ensure that typehints are shown correctly for properties
 autodoc_typehints = "description"
