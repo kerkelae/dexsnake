@@ -162,8 +162,8 @@ class UniswapV2Router:
             self.web3, self.web3.to_checksum_address(path[-1])
         ).decimals
         tx = self.contract.functions.swapTokensForExactTokens(
-            int(Decimal(amount_in) * Decimal(10**token_in_decimals)),
-            int(Decimal(amount_out_min) * Decimal(10**token_out_decimals)),
+            int(Decimal(amount_out) * Decimal(10**token_out_decimals)),
+            int(Decimal(amount_in_max) * Decimal(10**token_in_decimals)),
             [self.web3.to_checksum_address(address) for address in path],
             to,
             deadline,
