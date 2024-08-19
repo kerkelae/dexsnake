@@ -1,10 +1,8 @@
 import json
 import os
-from typing import Any, List, Optional
 
 from web3 import Web3
 from web3.contract import Contract
-from web3.types import TxReceipt
 
 from .config import CONFIG
 
@@ -13,20 +11,20 @@ class UniswapV2Factory:
 
     def __init__(self, web3: Web3):
         """
-        Initializes the factory object.
+        Initializes a new instance of the ``UniswapV2Factory`` class.
 
-        :param web3: An initialized Web3 object.
-        :type web3: Web3
+        :param web3: A ``Web3`` instance connected to a blockchain node.
+        :type web3: ``Web3``
         """
         if str(web3.eth.chain_id) not in CONFIG.keys():
             raise ValueError(f"Unsupported chain (chain ID = {web3.eth.chain_id})")
-        self.web3 = web3
+        self.web3: Web3 = web3
         with open(
             os.path.join(os.path.dirname(__file__), "abi", "UniswapV2Factory.json"), "r"
         ) as file:
             self.contract: Contract = self.web3.eth.contract(
                 address=CONFIG[str(self.web3.eth.chain_id)]["factory"],
-                abi=json.load(file)["abi"],
+                abi=json.load(file),
             )
 
     def get_pair(self, token_a: str, token_b: str) -> str:
@@ -38,6 +36,7 @@ class UniswapV2Factory:
         :type token_a: str
         :param token_b: The address of the second token.
         :type token_b: str
+
         :return: The address of the pair.
         :rtype: str
         """

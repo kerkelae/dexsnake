@@ -1,40 +1,42 @@
+from decimal import Decimal
 import json
 import os
 import time
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional
 
 from web3 import Web3
 from web3.contract import Contract
-from web3.types import FilterParams, TxReceipt
+from web3.types import TxReceipt
 
 from .config import CONFIG
+from ..utils.erc20_token import ERC20Token
 
 
 class UniswapV2Router:
 
     def __init__(self, web3: Web3):
         """
-        Initializes the router object.
+        Initializes a new instance of the ``UniswapV2Factory`` class.
 
-        :param web3: An initialized Web3 object.
-        :type web3: Web3
+        :param web3: A ``Web3`` instance connected to a blockchain node.
+        :type web3: ``Web3``
         """
         if str(web3.eth.chain_id) not in CONFIG.keys():
             raise ValueError(f"Unsupported chain (chain ID = {web3.eth.chain_id})")
-        self.web3 = web3
+        self.web3: Web3 = web3
         with open(
             os.path.join(os.path.dirname(__file__), "abi", "UniswapV2Router02.json"),
             "r",
         ) as file:
             self.contract: Contract = self.web3.eth.contract(
                 address=CONFIG[str(self.web3.eth.chain_id)]["router_02"],
-                abi=json.load(file)["abi"],
+                abi=json.load(file),
             )
 
     def swap_exact_tokens_for_tokens(
         self,
-        amount_in: int,
-        amount_out_min: int,
+        amount_in: Decimal,
+        amount_out_min: Decimal,
         path: List[str],
         to: str,
         account: str,
@@ -48,12 +50,13 @@ class UniswapV2Router:
         along the route determined by ``path``.
 
         :param amount_in: The amount of input tokens to send.
-        :type amount_in: int
+        :type amount_in: ``Decimal``
         :param amount_out_min: The minimum amount of output tokens that must be received
             for the transaction not to revert.
-        :type amount_out_min: int
+        :type amount_out_min: ``Decimal``
         :param path: A list of token addresses. The length of ``path`` must be >= 2 and
-            pools for each consecutive pair of addresses must exist and have liquidity.
+            Uniswap V2 pairs for each consecutive pair of addresses must exist and have
+            liquidity.
         :type path: List[str]
         :param to: The recipient of the output tokens.
         :type to: str
@@ -67,24 +70,30 @@ class UniswapV2Router:
         :param gas: The gas limit for the transaction. If not provided, it will be
             estimated automatically.
         :type gas: int, optional
-        :param gas_price: The gas price for the transaction in wei. If not provided, the
-            current network gas price will be used.
+        :param gas_price: The gas price for the transaction in wei (i.e., 1e-18 ETH). If
+            not provided, the current network gas price will be used.
         :type gas_price: int, optional
 
-        :return: The transaction receipt of the swap operation.
+        :return: The transaction receipt.
         :rtype: TxReceipt
         """
         if gas_price is None:
             gas_price = self.web3.eth.gas_price
         if deadline is None:
             deadline = int(time.time() + 300)
+        token_in_decimals = ERC20Token(
+            self.web3, self.web3.to_checksum_address(path[0])
+        ).decimals
+        token_out_decimals = ERC20Token(
+            self.web3, self.web3.to_checksum_address(path[-1])
+        ).decimals
         tx = self.contract.functions.swapExactTokensForTokens(
-            amount_in,
-            amount_out_min,
+            int(Decimal(amount_in) * Decimal(10**token_in_decimals)),
+            int(Decimal(amount_out_min) * Decimal(10**token_out_decimals)),
             [self.web3.to_checksum_address(address) for address in path],
             to,
             deadline,
-        ).buildTransaction(
+        ).build_transaction(
             {
                 "from": account,
                 "nonce": self.web3.eth.get_transaction_count(account),
@@ -100,8 +109,8 @@ class UniswapV2Router:
 
     def swap_tokens_for_exact_tokens(
         self,
-        amount_out: int,
-        amount_in_max: int,
+        amount_out: Decimal,
+        amount_in_max: Decimal,
         path: List[str],
         to: str,
         account: str,
@@ -111,16 +120,17 @@ class UniswapV2Router:
         gas_price: Optional[int] = None,
     ) -> TxReceipt:
         """
-        Swaps an exact amount of input tokens for as many output tokens as possible,
+        Swaps as few input tokens as possible for an exact amount of output tokens,
         along the route determined by ``path``.
 
         :param amount_out: The amount of input tokens to receive.
-        :type amount_out: int
-        :param amount_out_max: The maximum amount of input tokens that must be received
+        :type amount_out: ``Decimal``
+        :param amount_in_max: The maximum amount of input tokens that must be received
             for the transaction not to revert.
-        :type amount_out_max: int
+        :type amount_out_max: ``Decimal``
         :param path: A list of token addresses. The length of ``path`` must be >= 2 and
-            pools for each consecutive pair of addresses must exist and have liquidity.
+            Uniswap V2 pairs for each consecutive pair of addresses must exist and have
+            liquidity.
         :type path: List[str]
         :param to: The recipient of the output tokens.
         :type to: str
@@ -134,24 +144,30 @@ class UniswapV2Router:
         :param gas: The gas limit for the transaction. If not provided, it will be
             estimated automatically.
         :type gas: int, optional
-        :param gas_price: The gas price for the transaction in wei. If not provided, the
-            current network gas price will be used.
+        :param gas_price: The gas price for the transaction in wei (i.e., 1e-18 ETH). If
+            not provided, the current network gas price will be used.
         :type gas_price: int, optional
 
-        :return: The transaction receipt of the swap operation.
+        :return: The transaction receipt.
         :rtype: TxReceipt
         """
         if gas_price is None:
             gas_price = self.web3.eth.gas_price
         if deadline is None:
             deadline = int(time.time() + 300)
+        token_in_decimals = ERC20Token(
+            self.web3, self.web3.to_checksum_address(path[0])
+        ).decimals
+        token_out_decimals = ERC20Token(
+            self.web3, self.web3.to_checksum_address(path[-1])
+        ).decimals
         tx = self.contract.functions.swapTokensForExactTokens(
-            amount_out,
-            amount_in_max,
+            int(Decimal(amount_in) * Decimal(10**token_in_decimals)),
+            int(Decimal(amount_out_min) * Decimal(10**token_out_decimals)),
             [self.web3.to_checksum_address(address) for address in path],
             to,
             deadline,
-        ).buildTransaction(
+        ).build_transaction(
             {
                 "from": account,
                 "nonce": self.web3.eth.get_transaction_count(account),
