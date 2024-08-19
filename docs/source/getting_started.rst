@@ -48,6 +48,11 @@ initialize a Web3 instance.
 After configuring the provider and initializing the Web3 instance, you are ready to use
 Dexsnake.
 
+.. note::
+   
+   Dexsnake uses the initialized Web3 instance to determine which blockchain is used and
+   automatically selects the corresponding smart contract addresses.
+
 Making Transactions
 ###################
 
