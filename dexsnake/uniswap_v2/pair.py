@@ -1,18 +1,17 @@
-from decimal import Decimal
 import json
 import math
 import os
+from decimal import Decimal
 from typing import Optional, Tuple
 
 from web3 import Web3
 from web3.contract import Contract
 
-from .config import CONFIG
 from ..utils.erc20_token import ERC20Token
+from .config import CONFIG
 
 
 class UniswapV2Pair:
-
     def __init__(self, web3: Web3, address: str):
         """
         Initializes a new instance of the ``UniswapV2Pair`` class.

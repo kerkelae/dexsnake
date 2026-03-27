@@ -1,19 +1,18 @@
-from decimal import Decimal
 import json
 import os
 import time
+from decimal import Decimal
 from typing import Optional
 
 from web3 import Web3
 from web3.contract import Contract
 from web3.types import TxReceipt
 
-from .config import CONFIG
 from ..utils.erc20_token import ERC20Token
+from .config import CONFIG
 
 
 class UniswapV3Router:
-
     def __init__(self, web3: Web3):
         """
         Initializes a new instance of the ``UniswapV3Router`` class.

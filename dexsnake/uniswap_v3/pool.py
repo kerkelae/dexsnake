@@ -1,16 +1,15 @@
 import json
 import os
-from typing import Tuple, Dict
+from typing import Dict, Tuple
 
 from web3 import Web3
 from web3.contract import Contract
 
-from .config import CONFIG
 from ..utils.erc20_token import ERC20Token
+from .config import CONFIG
 
 
 class UniswapV3Pool:
-
     def __init__(self, web3: Web3, address: str):
         """
         Initializes a new instance of the ``UniswapV3Pool`` class.

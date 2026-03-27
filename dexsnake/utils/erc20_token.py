@@ -1,6 +1,6 @@
-from decimal import Decimal
 import json
 import os
+from decimal import Decimal
 from typing import Optional
 
 from web3 import Web3
@@ -9,7 +9,6 @@ from web3.types import TxReceipt
 
 
 class ERC20Token:
-
     def __init__(self, web3: Web3, address: str):
         """
         Initializes a new instance of the ``ERC20Token`` class.

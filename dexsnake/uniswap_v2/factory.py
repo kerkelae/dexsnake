@@ -8,7 +8,6 @@ from .config import CONFIG
 
 
 class UniswapV2Factory:
-
     def __init__(self, web3: Web3):
         """
         Initializes a new instance of the ``UniswapV2Factory`` class.
