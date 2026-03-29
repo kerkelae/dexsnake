@@ -177,7 +177,7 @@ class ERC20Token:
         :param to: The address to transfer tokens to.
         :type to: str
         :param value: The amount of tokens to transfer.
-        :type value: float
+        :type value: ``Decimal``
         :param account: The account address from which the transaction will be sent.
         :type account: str
         :param private_key: The private key of the account.
