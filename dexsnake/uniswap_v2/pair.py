@@ -1,5 +1,4 @@
 import json
-import math
 import os
 from decimal import Decimal
 from typing import Optional, Tuple
@@ -87,5 +86,5 @@ class UniswapV2Pair:
         """
         reserve_0, reserve_1 = self.get_reserves()
         if reserve_0 == 0:
-            return math.inf
+            return Decimal("Infinity")
         return reserve_1 / reserve_0

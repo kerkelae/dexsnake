@@ -1,5 +1,6 @@
 import json
 import os
+from decimal import Decimal
 from typing import Dict, Tuple
 
 from web3 import Web3
@@ -73,16 +74,16 @@ class UniswapV3Pool:
             self._fee = self.contract.functions.fee().call()
         return self._fee
 
-    def get_price(self) -> float:
+    def get_price(self) -> Decimal:
         """
         Returns the current price of ``token_0`` denominated in ``token_1`` in the pool.
 
         :return: The current price in the pool.
-        :rtype: float
+        :rtype: ``Decimal``
         """
-        slot_0 = self.contract.functions.slot0().call()
-        sqrt_price_x96 = slot_0[0]
-        price = (sqrt_price_x96 / (2**96)) ** 2 * 10 ** (
+        sqrt_price_x96 = self.contract.functions.slot0().call()[0]
+        sqrt_price = Decimal(sqrt_price_x96) / Decimal(2**96)
+        price = (sqrt_price**2) * (Decimal(10) ** (
             self.token_0.decimals - self.token_1.decimals
-        )
+        ))
         return price
