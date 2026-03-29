@@ -172,10 +172,10 @@ class UniswapV3Router:
         if deadline is None:
             deadline = int(time.time() + 300)
         token_in_decimals = ERC20Token(
-            self.web3, self.web3.to_checksum_address(path[0])
+            self.web3, self.web3.to_checksum_address(token_in)
         ).decimals
         token_out_decimals = ERC20Token(
-            self.web3, self.web3.to_checksum_address(path[-1])
+            self.web3, self.web3.to_checksum_address(token_out)
         ).decimals
         params = {
             "tokenIn": self.web3.to_checksum_address(token_in),
