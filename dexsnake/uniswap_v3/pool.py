@@ -83,7 +83,7 @@ class UniswapV3Pool:
         """
         sqrt_price_x96 = self.contract.functions.slot0().call()[0]
         sqrt_price = Decimal(sqrt_price_x96) / Decimal(2**96)
-        price = (sqrt_price**2) * (Decimal(10) ** (
-            self.token_0.decimals - self.token_1.decimals
-        ))
+        price = (sqrt_price**2) * (
+            Decimal(10) ** (self.token_0.decimals - self.token_1.decimals)
+        )
         return price
