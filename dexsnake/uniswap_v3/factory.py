@@ -39,7 +39,7 @@ class UniswapV3Factory:
         :param fee: The pool's fee denominated in hundredths of a basis point (i.e.,
             1e-6). Must be one of the following: 500, 3000, 10000.
 
-        :return: The address of the pair.
+        :return: The address of the pool.
         :rtype: str
         """
         return self.contract.functions.getPool(
