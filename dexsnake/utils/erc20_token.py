@@ -21,11 +21,12 @@ class ERC20Token:
         :type address: str
         """
         self.web3: Web3 = web3
-        self.address: str = address
+        address_checksum = self.web3.to_checksum_address(address)
+        self.address: str = address_checksum
         abi_path = os.path.join(os.path.dirname(__file__), "abi", "ERC20Token.json")
         with open(abi_path, "r") as file:
             self.contract: Contract = self.web3.eth.contract(
-                address=self.address, abi=json.load(file)
+                address=address_checksum, abi=json.load(file)
             )
         self._name: Optional[str] = None
         self._symbol: Optional[str] = None
@@ -43,9 +44,12 @@ class ERC20Token:
         :return: The remaining allowance of tokens.
         :rtype: ``Decimal``
         """
-        return Decimal(self.contract.functions.allowance(owner, spender).call()) / (
-            Decimal(10**self.decimals)
-        )
+        return Decimal(
+            self.contract.functions.allowance(
+                self.web3.to_checksum_address(owner),
+                self.web3.to_checksum_address(spender),
+            ).call()
+        ) / (Decimal(10**self.decimals))
 
     def approve(
         self,
@@ -80,13 +84,14 @@ class ERC20Token:
         """
         if gas_price is None:
             gas_price = self.web3.eth.gas_price
+        account_checksum = self.web3.to_checksum_address(account)
         tx = self.contract.functions.approve(
-            spender,
+            self.web3.to_checksum_address(spender),
             int(value * Decimal(10**self.decimals)),
         ).build_transaction(
             {
-                "from": account,
-                "nonce": self.web3.eth.get_transaction_count(account),
+                "from": account_checksum,
+                "nonce": self.web3.eth.get_transaction_count(account_checksum),
                 "gasPrice": gas_price,
             }
         )
@@ -107,9 +112,11 @@ class ERC20Token:
         :return: The balance of the account.
         :rtype: ``Decimal``
         """
-        return Decimal(self.contract.functions.balanceOf(account).call()) / Decimal(
-            10**self.decimals
-        )
+        return Decimal(
+            self.contract.functions.balanceOf(
+                self.web3.to_checksum_address(account)
+            ).call()
+        ) / Decimal(10**self.decimals)
 
     @property
     def decimals(self) -> int:
@@ -187,13 +194,14 @@ class ERC20Token:
         """
         if gas_price is None:
             gas_price = self.web3.eth.gas_price
+        account_checksum = self.web3.to_checksum_address(account)
         tx = self.contract.functions.transfer(
-            to,
+            self.web3.to_checksum_address(to),
             int(value * Decimal(10**self.decimals)),
         ).build_transaction(
             {
-                "from": account,
-                "nonce": self.web3.eth.get_transaction_count(account),
+                "from": account_checksum,
+                "nonce": self.web3.eth.get_transaction_count(account_checksum),
                 "gasPrice": gas_price,
             }
         )

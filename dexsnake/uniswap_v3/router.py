@@ -87,15 +87,14 @@ class UniswapV3Router:
             gas_price = self.web3.eth.gas_price
         if deadline is None:
             deadline = int(time.time() + 300)
-        token_in_decimals = ERC20Token(
-            self.web3, self.web3.to_checksum_address(token_in)
-        ).decimals
-        token_out_decimals = ERC20Token(
-            self.web3, self.web3.to_checksum_address(token_out)
-        ).decimals
+        token_in_checksum = self.web3.to_checksum_address(token_in)
+        token_out_checksum = self.web3.to_checksum_address(token_out)
+        account_checksum = self.web3.to_checksum_address(account)
+        token_in_decimals = ERC20Token(self.web3, token_in_checksum).decimals
+        token_out_decimals = ERC20Token(self.web3, token_out_checksum).decimals
         params = {
-            "tokenIn": self.web3.to_checksum_address(token_in),
-            "tokenOut": self.web3.to_checksum_address(token_out),
+            "tokenIn": token_in_checksum,
+            "tokenOut": token_out_checksum,
             "fee": fee,
             "recipient": self.web3.to_checksum_address(recipient),
             "deadline": deadline,
@@ -107,8 +106,8 @@ class UniswapV3Router:
         }
         tx = self.contract.functions.exactInputSingle(params).build_transaction(
             {
-                "from": account,
-                "nonce": self.web3.eth.get_transaction_count(account),
+                "from": account_checksum,
+                "nonce": self.web3.eth.get_transaction_count(account_checksum),
                 "gasPrice": gas_price,
             }
         )
@@ -171,15 +170,14 @@ class UniswapV3Router:
             gas_price = self.web3.eth.gas_price
         if deadline is None:
             deadline = int(time.time() + 300)
-        token_in_decimals = ERC20Token(
-            self.web3, self.web3.to_checksum_address(token_in)
-        ).decimals
-        token_out_decimals = ERC20Token(
-            self.web3, self.web3.to_checksum_address(token_out)
-        ).decimals
+        token_in_checksum = self.web3.to_checksum_address(token_in)
+        token_out_checksum = self.web3.to_checksum_address(token_out)
+        account_checksum = self.web3.to_checksum_address(account)
+        token_in_decimals = ERC20Token(self.web3, token_in_checksum).decimals
+        token_out_decimals = ERC20Token(self.web3, token_out_checksum).decimals
         params = {
-            "tokenIn": self.web3.to_checksum_address(token_in),
-            "tokenOut": self.web3.to_checksum_address(token_out),
+            "tokenIn": token_in_checksum,
+            "tokenOut": token_out_checksum,
             "fee": fee,
             "recipient": self.web3.to_checksum_address(recipient),
             "deadline": deadline,
@@ -191,8 +189,8 @@ class UniswapV3Router:
         }
         tx = self.contract.functions.exactOutputSingle(params).build_transaction(
             {
-                "from": account,
-                "nonce": self.web3.eth.get_transaction_count(account),
+                "from": account_checksum,
+                "nonce": self.web3.eth.get_transaction_count(account_checksum),
                 "gasPrice": gas_price,
             }
         )
