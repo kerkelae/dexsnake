@@ -15,7 +15,7 @@ from .config import CONFIG
 class UniswapV2Router:
     def __init__(self, web3: Web3):
         """
-        Initializes a new instance of the ``UniswapV2Factory`` class.
+        Initializes a new instance of the ``UniswapV2Router`` class.
 
         :param web3: A ``Web3`` instance connected to a blockchain node.
         :type web3: ``Web3``
@@ -120,11 +120,11 @@ class UniswapV2Router:
         Swaps as few input tokens as possible for an exact amount of output tokens,
         along the route determined by ``path``.
 
-        :param amount_out: The amount of input tokens to receive.
+        :param amount_out: The amount of output tokens to receive.
         :type amount_out: ``Decimal``
-        :param amount_in_max: The maximum amount of input tokens that must be received
+        :param amount_in_max: The maximum amount of input tokens that can be sent
             for the transaction not to revert.
-        :type amount_out_max: ``Decimal``
+        :type amount_in_max: ``Decimal``
         :param path: A list of token addresses. The length of ``path`` must be >= 2 and
             Uniswap V2 pairs for each consecutive pair of addresses must exist and have
             liquidity.
