@@ -42,3 +42,14 @@ package and development tools separately:
    conda activate dexsnake
    pip install -e .
    pip install -r requirements-dev.txt
+
+Fork tests (optional)
+#####################
+
+Install `Anvil <https://getfoundry.sh/getting-started/installation/>`_ separately and
+provide a mainnet RPC that can read block 20,000,000. The tests fork that block and
+send transactions only to local Anvil:
+
+.. code-block::
+
+   RUN_FORK_TESTS=1 MAINNET_RPC_URL=https://your-rpc.example pytest -m fork
