@@ -8,6 +8,7 @@ from web3 import Web3
 from web3.contract import Contract
 from web3.types import TxReceipt
 
+from ..utils.amounts import _to_base_units
 from ..utils.erc20_token import ERC20Token
 from .config import CONFIG
 
@@ -97,10 +98,8 @@ class UniswapV3Router:
             "tokenOut": token_out_checksum,
             "fee": fee,
             "recipient": self.web3.to_checksum_address(recipient),
-            "amountIn": int(Decimal(amount_in) * Decimal(10**token_in_decimals)),
-            "amountOutMinimum": int(
-                Decimal(amount_out_min) * Decimal(10**token_out_decimals)
-            ),
+            "amountIn": _to_base_units(amount_in, token_in_decimals),
+            "amountOutMinimum": _to_base_units(amount_out_min, token_out_decimals),
             "sqrtPriceLimitX96": 0,
         }
         swap_data = self.contract.encode_abi("exactInputSingle", args=[params])
@@ -180,10 +179,8 @@ class UniswapV3Router:
             "tokenOut": token_out_checksum,
             "fee": fee,
             "recipient": self.web3.to_checksum_address(recipient),
-            "amountOut": int(Decimal(amount_out) * Decimal(10**token_out_decimals)),
-            "amountInMaximum": int(
-                Decimal(amount_in_max) * Decimal(10**token_in_decimals)
-            ),
+            "amountOut": _to_base_units(amount_out, token_out_decimals),
+            "amountInMaximum": _to_base_units(amount_in_max, token_in_decimals),
             "sqrtPriceLimitX96": 0,
         }
         swap_data = self.contract.encode_abi("exactOutputSingle", args=[params])
