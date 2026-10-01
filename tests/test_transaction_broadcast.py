@@ -109,7 +109,11 @@ def test_write_methods_broadcast_signed_transaction(
         result = getattr(instance, method_name)(**kwargs)
 
     assert result is receipt
-    function.return_value.build_transaction.assert_called_once()
+    if cls is UniswapV3Router:
+        instance.contract.encode_abi.assert_called_once()
+        instance.contract.functions.multicall.return_value.build_transaction.assert_called_once()
+    else:
+        function.return_value.build_transaction.assert_called_once()
     web3.eth.account.sign_transaction.assert_called_once()
     web3.eth.send_raw_transaction.assert_called_once_with(b"signed transaction")
     web3.eth.wait_for_transaction_receipt.assert_called_once_with(b"transaction hash")
