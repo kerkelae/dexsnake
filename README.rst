@@ -38,7 +38,7 @@ package and development tools separately:
 
 .. code-block::
 
-   conda install -n dexsnake python=3.13 pip
+   conda install -n dexsnake python=3.14 pip
    conda activate dexsnake
    pip install -e .
    pip install -r requirements-dev.txt
