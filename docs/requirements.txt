@@ -1,7 +1,4 @@
 furo
 ipython
-jupyterlab
-jupyterlab-pygments
 nbsphinx
-pygments
 sphinx
