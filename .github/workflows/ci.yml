@@ -38,3 +38,20 @@ jobs:
           for package, count in expected.items():
               assert len(list(files(package).joinpath("abi").glob("*.json"))) == count
           PY
+
+  fork:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+      - uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: v1.8.5
+      - run: python -m pip install -e .
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m pytest -m fork tests/test_fork.py
+        env:
+          RUN_FORK_TESTS: "1"

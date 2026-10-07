@@ -1,6 +1,6 @@
 """Opt-in transaction tests against a local Anvil mainnet fork.
 
-Run with RUN_FORK_TESTS=1 MAINNET_RPC_URL=... pytest -m fork.
+Run with RUN_FORK_TESTS=1 pytest -m fork.
 Anvil reads mainnet state, but every transaction is sent to localhost.
 """
 
@@ -21,6 +21,7 @@ from dexsnake.utils.erc20_token import ERC20Token
 pytestmark = pytest.mark.fork
 
 FORK_BLOCK = 20_000_000
+DEFAULT_RPC_URL = "https://ethereum.reth.rs/rpc"
 WETH = Web3.to_checksum_address("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
 USDC = Web3.to_checksum_address("0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48")
 WETH_DEPOSIT_ABI = [
@@ -48,10 +49,10 @@ WETH_DEPOSIT_ABI = [
 def web3():
     if os.environ.get("RUN_FORK_TESTS") != "1":
         pytest.skip("set RUN_FORK_TESTS=1 to run fork tests")
-    rpc_url = os.environ.get("MAINNET_RPC_URL")
+    rpc_url = os.environ.get("MAINNET_RPC_URL") or DEFAULT_RPC_URL
     anvil = shutil.which("anvil")
-    if not rpc_url or not anvil:
-        pytest.fail("fork tests require MAINNET_RPC_URL and Anvil")
+    if not anvil:
+        pytest.fail("fork tests require Anvil")
 
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0))
