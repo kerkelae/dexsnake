@@ -29,3 +29,16 @@ The most recent (*possibly untested!*) version can be installed from GitHub:
 .. code-block::
 
    pip install git+https://github.com/kerkelae/dexsnake.git
+
+Development
+###########
+
+Install Python and pip in the ``dexsnake`` conda environment, then install the
+package and development tools separately:
+
+.. code-block::
+
+   conda install -n dexsnake python=3.14 pip
+   conda activate dexsnake
+   pip install -e .
+   pip install -r requirements-dev.txt
