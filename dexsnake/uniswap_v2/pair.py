@@ -86,6 +86,6 @@ class UniswapV2Pair:
         :rtype: ``Decimal``
         """
         reserve_0, reserve_1 = self.get_reserves()
-        if reserve_0 == 0:
-            return Decimal("Infinity")
+        if reserve_0 == 0 or reserve_1 == 0:
+            raise ValueError("Pair has no price without both reserves")
         return reserve_1 / reserve_0
