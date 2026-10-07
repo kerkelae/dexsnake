@@ -15,14 +15,15 @@ class UniswapV2Factory:
         :param web3: A ``Web3`` instance connected to a blockchain node.
         :type web3: ``Web3``
         """
-        if str(web3.eth.chain_id) not in CONFIG.keys():
-            raise ValueError(f"Unsupported chain (chain ID = {web3.eth.chain_id})")
+        chain_id = str(web3.eth.chain_id)
+        if chain_id not in CONFIG:
+            raise ValueError(f"Unsupported chain (chain ID = {chain_id})")
         self.web3: Web3 = web3
         with open(
             os.path.join(os.path.dirname(__file__), "abi", "UniswapV2Factory.json"), "r"
         ) as file:
             self.contract: Contract = self.web3.eth.contract(
-                address=CONFIG[str(self.web3.eth.chain_id)]["factory"],
+                address=CONFIG[chain_id]["factory"],
                 abi=json.load(file),
             )
 
