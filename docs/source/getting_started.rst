@@ -19,7 +19,7 @@ connect to the blockchain are:
   machine as the blockchain node. IPC provides the quickest communication with the node.
 
 - **WebSocket**: Recommended for applications that connect remotely to a node.
-  WebSockets maintain a persistent connection and are suitable for environments
+  WebSockets provide a faster connection than HTTP and are suitable for environments
   where real-time updates from the blockchain are crucial.
 
 - **HTTP**: This is a versatile and widely used method that offers extensive
