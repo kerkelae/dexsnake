@@ -82,6 +82,8 @@ class UniswapV3Pool:
         :rtype: ``Decimal``
         """
         sqrt_price_x96 = self.contract.functions.slot0().call()[0]
+        if sqrt_price_x96 == 0:
+            raise ValueError("Pool is not initialized")
         sqrt_price = Decimal(sqrt_price_x96) / Decimal(2**96)
         price = (sqrt_price**2) * (
             Decimal(10) ** (self.token_0.decimals - self.token_1.decimals)
