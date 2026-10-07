@@ -1,7 +1,7 @@
 import json
 import os
 from decimal import Decimal
-from typing import Dict, Optional, Tuple
+from typing import Optional
 
 from web3 import Web3
 from web3.contract import Contract
