@@ -10,6 +10,7 @@ from web3.types import TxReceipt
 
 from ..utils.amounts import _to_base_units
 from ..utils.erc20_token import ERC20Token
+from ..utils.transactions import _send_transaction
 from .config import CONFIG
 
 
@@ -77,33 +78,19 @@ class UniswapV2Router:
         :return: The transaction receipt.
         :rtype: TxReceipt
         """
-        if gas_price is None:
-            gas_price = self.web3.eth.gas_price
         if deadline is None:
             deadline = int(time.time() + 300)
         path_checksum = [self.web3.to_checksum_address(address) for address in path]
-        account_checksum = self.web3.to_checksum_address(account)
         token_in_decimals = ERC20Token(self.web3, path_checksum[0]).decimals
         token_out_decimals = ERC20Token(self.web3, path_checksum[-1]).decimals
-        tx = self.contract.functions.swapExactTokensForTokens(
+        function = self.contract.functions.swapExactTokensForTokens(
             _to_base_units(amount_in, token_in_decimals),
             _to_base_units(amount_out_min, token_out_decimals),
             path_checksum,
             self.web3.to_checksum_address(to),
             deadline,
-        ).build_transaction(
-            {
-                "from": account_checksum,
-                "nonce": self.web3.eth.get_transaction_count(account_checksum),
-                "gasPrice": gas_price,
-            }
         )
-        if gas is None:
-            gas = self.web3.eth.estimate_gas(tx)
-        tx["gas"] = gas
-        signed_tx = self.web3.eth.account.sign_transaction(tx, private_key=private_key)
-        tx_hash = self.web3.eth.send_raw_transaction(signed_tx.raw_transaction)
-        return self.web3.eth.wait_for_transaction_receipt(tx_hash)
+        return _send_transaction(self.web3, function, account, private_key, gas, gas_price)
 
     def swap_tokens_for_exact_tokens(
         self,
@@ -149,30 +136,16 @@ class UniswapV2Router:
         :return: The transaction receipt.
         :rtype: TxReceipt
         """
-        if gas_price is None:
-            gas_price = self.web3.eth.gas_price
         if deadline is None:
             deadline = int(time.time() + 300)
         path_checksum = [self.web3.to_checksum_address(address) for address in path]
-        account_checksum = self.web3.to_checksum_address(account)
         token_in_decimals = ERC20Token(self.web3, path_checksum[0]).decimals
         token_out_decimals = ERC20Token(self.web3, path_checksum[-1]).decimals
-        tx = self.contract.functions.swapTokensForExactTokens(
+        function = self.contract.functions.swapTokensForExactTokens(
             _to_base_units(amount_out, token_out_decimals),
             _to_base_units(amount_in_max, token_in_decimals),
             path_checksum,
             self.web3.to_checksum_address(to),
             deadline,
-        ).build_transaction(
-            {
-                "from": account_checksum,
-                "nonce": self.web3.eth.get_transaction_count(account_checksum),
-                "gasPrice": gas_price,
-            }
         )
-        if gas is None:
-            gas = self.web3.eth.estimate_gas(tx)
-        tx["gas"] = gas
-        signed_tx = self.web3.eth.account.sign_transaction(tx, private_key=private_key)
-        tx_hash = self.web3.eth.send_raw_transaction(signed_tx.raw_transaction)
-        return self.web3.eth.wait_for_transaction_receipt(tx_hash)
+        return _send_transaction(self.web3, function, account, private_key, gas, gas_price)

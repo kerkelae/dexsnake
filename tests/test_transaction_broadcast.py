@@ -7,6 +7,7 @@ import pytest
 from dexsnake.uniswap_v2.router import UniswapV2Router
 from dexsnake.uniswap_v3.router import UniswapV3Router
 from dexsnake.utils.erc20_token import ERC20Token
+from dexsnake.utils.transactions import _send_transaction
 
 
 COMMON = {"account": "0xaccount", "private_key": "key", "gas": 21000, "gas_price": 1}
@@ -85,8 +86,9 @@ COMMON = {"account": "0xaccount", "private_key": "key", "gas": 21000, "gas_price
         ),
     ],
 )
-def test_write_methods_broadcast_signed_transaction(
-    cls, method_name, contract_function, kwargs
+@pytest.mark.parametrize("status", [0, 1])
+def test_write_methods_handle_receipts(
+    cls, method_name, contract_function, kwargs, status
 ):
     web3 = MagicMock()
     web3.to_checksum_address.side_effect = lambda address: address
@@ -95,7 +97,7 @@ def test_write_methods_broadcast_signed_transaction(
         raw_transaction=b"signed transaction"
     )
     web3.eth.send_raw_transaction.return_value = b"transaction hash"
-    receipt = {"status": 1}
+    receipt = {"status": status}
     web3.eth.wait_for_transaction_receipt.return_value = receipt
 
     instance = object.__new__(cls)
@@ -103,17 +105,48 @@ def test_write_methods_broadcast_signed_transaction(
     instance.contract = MagicMock()
     instance._decimals = 18
     function = getattr(instance.contract.functions, contract_function)
-    function.return_value.build_transaction.return_value = {}
+    build_transaction = (
+        instance.contract.functions.multicall.return_value.build_transaction
+        if cls is UniswapV3Router
+        else function.return_value.build_transaction
+    )
+    build_transaction.return_value = {}
 
     with patch(f"{cls.__module__}.ERC20Token", return_value=SimpleNamespace(decimals=18)):
-        result = getattr(instance, method_name)(**kwargs)
+        if status == 0:
+            with pytest.raises(RuntimeError) as error:
+                getattr(instance, method_name)(**kwargs)
+            assert "0x" + b"transaction hash".hex() in str(error.value)
+        else:
+            assert getattr(instance, method_name)(**kwargs) is receipt
 
-    assert result is receipt
     if cls is UniswapV3Router:
         instance.contract.encode_abi.assert_called_once()
-        instance.contract.functions.multicall.return_value.build_transaction.assert_called_once()
-    else:
-        function.return_value.build_transaction.assert_called_once()
+    build_transaction.assert_called_once_with(
+        {"from": "0xaccount", "nonce": 0, "gasPrice": 1, "gas": 21000}
+    )
+    web3.eth.get_transaction_count.assert_called_once_with("0xaccount", "pending")
+    web3.eth.estimate_gas.assert_not_called()
     web3.eth.account.sign_transaction.assert_called_once()
     web3.eth.send_raw_transaction.assert_called_once_with(b"signed transaction")
     web3.eth.wait_for_transaction_receipt.assert_called_once_with(b"transaction hash")
+
+
+def test_unspecified_gas_is_left_for_web3_to_estimate():
+    web3 = MagicMock()
+    web3.to_checksum_address.side_effect = lambda address: address
+    web3.eth.gas_price = 1
+    web3.eth.get_transaction_count.return_value = 0
+    web3.eth.account.sign_transaction.return_value = SimpleNamespace(
+        raw_transaction=b"signed transaction"
+    )
+    web3.eth.wait_for_transaction_receipt.return_value = {"status": 1}
+    function = MagicMock()
+    function.build_transaction.return_value = {}
+
+    _send_transaction(web3, function, "0xaccount", "key", None, None)
+
+    function.build_transaction.assert_called_once_with(
+        {"from": "0xaccount", "nonce": 0, "gasPrice": 1}
+    )
+    web3.eth.estimate_gas.assert_not_called()

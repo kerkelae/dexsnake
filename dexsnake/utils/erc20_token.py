@@ -8,6 +8,7 @@ from web3.contract import Contract
 from web3.types import TxReceipt
 
 from .amounts import _to_base_units
+from .transactions import _send_transaction
 
 
 class ERC20Token:
@@ -84,25 +85,11 @@ class ERC20Token:
         :return: The transaction receipt.
         :rtype: TxReceipt
         """
-        if gas_price is None:
-            gas_price = self.web3.eth.gas_price
-        account_checksum = self.web3.to_checksum_address(account)
-        tx = self.contract.functions.approve(
+        function = self.contract.functions.approve(
             self.web3.to_checksum_address(spender),
             _to_base_units(value, self.decimals),
-        ).build_transaction(
-            {
-                "from": account_checksum,
-                "nonce": self.web3.eth.get_transaction_count(account_checksum),
-                "gasPrice": gas_price,
-            }
         )
-        if gas is None:
-            gas = self.web3.eth.estimate_gas(tx)
-        tx["gas"] = gas
-        signed_tx = self.web3.eth.account.sign_transaction(tx, private_key=private_key)
-        tx_hash = self.web3.eth.send_raw_transaction(signed_tx.raw_transaction)
-        return self.web3.eth.wait_for_transaction_receipt(tx_hash)
+        return _send_transaction(self.web3, function, account, private_key, gas, gas_price)
 
     def balance_of(self, account: str) -> Decimal:
         """
@@ -194,22 +181,8 @@ class ERC20Token:
         :return: The transaction receipt.
         :rtype: TxReceipt
         """
-        if gas_price is None:
-            gas_price = self.web3.eth.gas_price
-        account_checksum = self.web3.to_checksum_address(account)
-        tx = self.contract.functions.transfer(
+        function = self.contract.functions.transfer(
             self.web3.to_checksum_address(to),
             _to_base_units(value, self.decimals),
-        ).build_transaction(
-            {
-                "from": account_checksum,
-                "nonce": self.web3.eth.get_transaction_count(account_checksum),
-                "gasPrice": gas_price,
-            }
         )
-        if gas is None:
-            gas = self.web3.eth.estimate_gas(tx)
-        tx["gas"] = gas
-        signed_tx = self.web3.eth.account.sign_transaction(tx, private_key=private_key)
-        tx_hash = self.web3.eth.send_raw_transaction(signed_tx.raw_transaction)
-        return self.web3.eth.wait_for_transaction_receipt(tx_hash)
+        return _send_transaction(self.web3, function, account, private_key, gas, gas_price)
