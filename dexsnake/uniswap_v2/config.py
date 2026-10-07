@@ -32,7 +32,7 @@ CONFIG = {
         "router_02": "0x4752ba5DBc23f44D87826276BF6Fd6b1C372aD24",
     },
     "11155111": {
-        "factory": "0xB7f907f7A9eBC822a80BD25E224be42Ce0A698A0",
-        "router_02": "0x425141165d3DE9FEC831896C016617a52363b687",
+        "factory": "0xF62c03E08ada871A0bEb309762E260a7a6a880E6",
+        "router_02": "0xeE567Fe1712Faf6149d80dA1E6934E354124CfE3",
     },
 }
