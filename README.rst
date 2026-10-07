@@ -13,10 +13,9 @@ Installation
 ############
 
 .. note::
-   
-   ⚠️ Dexsnake is under active development and future relases are guaranteed to introduce
-   breaking changes. Familiarize yourself with the source code and use the package
-   with care to avoid the loss of funds!
+
+   Dexsnake is under active development. Its API may change before version 1.0.
+   Review transaction parameters carefully before trading with real funds.
 
 The most recent release can be installed with `pip <https://pip.pypa.io/>`_:
 
@@ -24,7 +23,7 @@ The most recent release can be installed with `pip <https://pip.pypa.io/>`_:
 
    pip install dexsnake
 
-The most recent (*possibly untested!*) version can be installed from GitHub:
+The development version can be installed from GitHub:
 
 .. code-block::
 
@@ -42,3 +41,14 @@ package and development tools separately:
    conda activate dexsnake
    pip install -e .
    pip install -r requirements-dev.txt
+
+Fork tests (optional)
+#####################
+
+Install `Anvil <https://getfoundry.sh/getting-started/installation/>`_ separately and
+provide a mainnet RPC that can read block 20,000,000. The tests fork that block and
+send transactions only to local Anvil:
+
+.. code-block::
+
+   RUN_FORK_TESTS=1 MAINNET_RPC_URL=https://your-rpc.example pytest -m fork
