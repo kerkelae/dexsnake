@@ -13,10 +13,9 @@ Installation
 ############
 
 .. note::
-   
-   ⚠️ Dexsnake is under active development and future relases are guaranteed to introduce
-   breaking changes. Familiarize yourself with the source code and use the package
-   with care to avoid the loss of funds!
+
+   Dexsnake is under active development. Its API may change before version 1.0.
+   Review transaction parameters carefully before trading with real funds.
 
 The most recent release can be installed with `pip <https://pip.pypa.io/>`_:
 
@@ -24,7 +23,7 @@ The most recent release can be installed with `pip <https://pip.pypa.io/>`_:
 
    pip install dexsnake
 
-The most recent (*possibly untested!*) version can be installed from GitHub:
+The development version can be installed from GitHub:
 
 .. code-block::
 
