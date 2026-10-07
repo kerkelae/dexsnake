@@ -99,7 +99,7 @@ class ERC20Token:
             gas = self.web3.eth.estimate_gas(tx)
         tx["gas"] = gas
         signed_tx = self.web3.eth.account.sign_transaction(tx, private_key=private_key)
-        tx_hash = self.web3.eth.send_raw_transaction(signed_tx.rawTransaction)
+        tx_hash = self.web3.eth.send_raw_transaction(signed_tx.raw_transaction)
         return self.web3.eth.wait_for_transaction_receipt(tx_hash)
 
     def balance_of(self, account: str) -> Decimal:
@@ -209,5 +209,5 @@ class ERC20Token:
             gas = self.web3.eth.estimate_gas(tx)
         tx["gas"] = gas
         signed_tx = self.web3.eth.account.sign_transaction(tx, private_key=private_key)
-        tx_hash = self.web3.eth.send_raw_transaction(signed_tx.rawTransaction)
+        tx_hash = self.web3.eth.send_raw_transaction(signed_tx.raw_transaction)
         return self.web3.eth.wait_for_transaction_receipt(tx_hash)
