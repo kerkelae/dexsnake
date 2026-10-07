@@ -2,12 +2,13 @@ import json
 import os
 import time
 from decimal import Decimal
-from typing import Any, List, Optional
+from typing import List, Optional
 
 from web3 import Web3
 from web3.contract import Contract
 from web3.types import TxReceipt
 
+from ..utils.amounts import _to_base_units
 from ..utils.erc20_token import ERC20Token
 from .config import CONFIG
 
@@ -85,8 +86,8 @@ class UniswapV2Router:
         token_in_decimals = ERC20Token(self.web3, path_checksum[0]).decimals
         token_out_decimals = ERC20Token(self.web3, path_checksum[-1]).decimals
         tx = self.contract.functions.swapExactTokensForTokens(
-            int(Decimal(amount_in) * Decimal(10**token_in_decimals)),
-            int(Decimal(amount_out_min) * Decimal(10**token_out_decimals)),
+            _to_base_units(amount_in, token_in_decimals),
+            _to_base_units(amount_out_min, token_out_decimals),
             path_checksum,
             self.web3.to_checksum_address(to),
             deadline,
@@ -157,8 +158,8 @@ class UniswapV2Router:
         token_in_decimals = ERC20Token(self.web3, path_checksum[0]).decimals
         token_out_decimals = ERC20Token(self.web3, path_checksum[-1]).decimals
         tx = self.contract.functions.swapTokensForExactTokens(
-            int(Decimal(amount_out) * Decimal(10**token_out_decimals)),
-            int(Decimal(amount_in_max) * Decimal(10**token_in_decimals)),
+            _to_base_units(amount_out, token_out_decimals),
+            _to_base_units(amount_in_max, token_in_decimals),
             path_checksum,
             self.web3.to_checksum_address(to),
             deadline,

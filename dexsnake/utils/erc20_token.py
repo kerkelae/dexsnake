@@ -7,6 +7,8 @@ from web3 import Web3
 from web3.contract import Contract
 from web3.types import TxReceipt
 
+from .amounts import _to_base_units
+
 
 class ERC20Token:
     def __init__(self, web3: Web3, address: str):
@@ -87,7 +89,7 @@ class ERC20Token:
         account_checksum = self.web3.to_checksum_address(account)
         tx = self.contract.functions.approve(
             self.web3.to_checksum_address(spender),
-            int(value * Decimal(10**self.decimals)),
+            _to_base_units(value, self.decimals),
         ).build_transaction(
             {
                 "from": account_checksum,
@@ -197,7 +199,7 @@ class ERC20Token:
         account_checksum = self.web3.to_checksum_address(account)
         tx = self.contract.functions.transfer(
             self.web3.to_checksum_address(to),
-            int(value * Decimal(10**self.decimals)),
+            _to_base_units(value, self.decimals),
         ).build_transaction(
             {
                 "from": account_checksum,
