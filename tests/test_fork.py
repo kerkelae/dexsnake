@@ -228,3 +228,65 @@ def test_v3_swap(fork_state):
     assert receipt["status"] == 1
     assert weth.balance_of(account.address) == weth_before - amount_in
     assert usdc.balance_of(account.address) > usdc_before
+
+
+def test_v2_swap_for_exact_output(fork_state):
+    web3, account = fork_state
+    weth = ERC20Token(web3, WETH)
+    usdc = ERC20Token(web3, USDC)
+    router = UniswapV2Router(web3)
+    amount_out = Decimal("1")
+    amount_in_max = Decimal("0.01")
+    approval = weth.approve(
+        router.contract.address, amount_in_max, account.address, account.key.hex()
+    )
+    assert approval["status"] == 1
+    weth_before = weth.balance_of(account.address)
+    usdc_before = usdc.balance_of(account.address)
+
+    receipt = router.swap_tokens_for_exact_tokens(
+        amount_out=amount_out,
+        amount_in_max=amount_in_max,
+        path=[WETH, USDC],
+        to=account.address,
+        account=account.address,
+        private_key=account.key.hex(),
+        deadline=web3.eth.get_block("latest")["timestamp"] + 300,
+    )
+
+    assert receipt["status"] == 1
+    weth_after = weth.balance_of(account.address)
+    assert weth_before - amount_in_max <= weth_after < weth_before
+    assert usdc.balance_of(account.address) == usdc_before + amount_out
+
+
+def test_v3_swap_for_exact_output(fork_state):
+    web3, account = fork_state
+    weth = ERC20Token(web3, WETH)
+    usdc = ERC20Token(web3, USDC)
+    router = UniswapV3Router(web3)
+    amount_out = Decimal("1")
+    amount_in_max = Decimal("0.01")
+    approval = weth.approve(
+        router.contract.address, amount_in_max, account.address, account.key.hex()
+    )
+    assert approval["status"] == 1
+    weth_before = weth.balance_of(account.address)
+    usdc_before = usdc.balance_of(account.address)
+
+    receipt = router.exact_output_single(
+        amount_out=amount_out,
+        amount_in_max=amount_in_max,
+        token_in=WETH,
+        token_out=USDC,
+        fee=500,
+        recipient=account.address,
+        account=account.address,
+        private_key=account.key.hex(),
+        deadline=web3.eth.get_block("latest")["timestamp"] + 300,
+    )
+
+    assert receipt["status"] == 1
+    weth_after = weth.balance_of(account.address)
+    assert weth_before - amount_in_max <= weth_after < weth_before
+    assert usdc.balance_of(account.address) == usdc_before + amount_out
