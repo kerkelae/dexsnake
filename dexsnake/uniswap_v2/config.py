@@ -15,7 +15,7 @@ CONFIG = {
         "factory": "0x9e5A52f57b3038F1B8EeE45F28b3C1967e22799C",
         "router_02": "0xedf6066a2b290C185783862C7F4776A2C8077AD1",
     },
-    "238": {
+    "81457": {
         "factory": "0x5C346464d33F90bABaf70dB6388507CC889C1070",
         "router_02": "0xBB66Eb1c5e875933D44DAe661dbD80e5D9B03035",
     },
