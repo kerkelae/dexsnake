@@ -64,7 +64,7 @@ class UniswapV3Router:
         :param token_out: The address of the output token.
         :type token_out: str
         :param fee: The pool's fee denominated in hundredths of a basis point (i.e.,
-            1e-6). Must be one of the following: 500, 3000, 10000.
+            1e-6).
         :type fee: int
         :param recipient: The recipient of the output tokens.
         :type recipient: str
@@ -131,7 +131,7 @@ class UniswapV3Router:
         :param token_out: The address of the output token.
         :type token_out: str
         :param fee: The pool's fee denominated in hundredths of a basis point (i.e.,
-            1e-6). Must be one of the following: 500, 3000, 10000.
+            1e-6).
         :type fee: int
         :param recipient: The recipient of the output tokens.
         :type recipient: str
