@@ -97,14 +97,14 @@ class UniswapV3Router:
             "tokenOut": token_out_checksum,
             "fee": fee,
             "recipient": self.web3.to_checksum_address(recipient),
-            "deadline": deadline,
             "amountIn": int(Decimal(amount_in) * Decimal(10**token_in_decimals)),
             "amountOutMinimum": int(
                 Decimal(amount_out_min) * Decimal(10**token_out_decimals)
             ),
             "sqrtPriceLimitX96": 0,
         }
-        tx = self.contract.functions.exactInputSingle(params).build_transaction(
+        swap_data = self.contract.encode_abi("exactInputSingle", args=[params])
+        tx = self.contract.functions.multicall(deadline, [swap_data]).build_transaction(
             {
                 "from": account_checksum,
                 "nonce": self.web3.eth.get_transaction_count(account_checksum),
@@ -180,14 +180,14 @@ class UniswapV3Router:
             "tokenOut": token_out_checksum,
             "fee": fee,
             "recipient": self.web3.to_checksum_address(recipient),
-            "deadline": deadline,
             "amountOut": int(Decimal(amount_out) * Decimal(10**token_out_decimals)),
             "amountInMaximum": int(
                 Decimal(amount_in_max) * Decimal(10**token_in_decimals)
             ),
             "sqrtPriceLimitX96": 0,
         }
-        tx = self.contract.functions.exactOutputSingle(params).build_transaction(
+        swap_data = self.contract.encode_abi("exactOutputSingle", args=[params])
+        tx = self.contract.functions.multicall(deadline, [swap_data]).build_transaction(
             {
                 "from": account_checksum,
                 "nonce": self.web3.eth.get_transaction_count(account_checksum),
