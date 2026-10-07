@@ -68,4 +68,4 @@ variables, which your Python code can then access securely:
 
    import os
 
-   private_key = os.getenv("PRIVATE_KEY")
+   private_key = os.getenv("WEB3_PRIVATE_KEY")
