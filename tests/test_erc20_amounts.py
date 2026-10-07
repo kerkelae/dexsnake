@@ -18,7 +18,7 @@ class ERC20AmountTests(unittest.TestCase):
         token.web3.eth.get_transaction_count.return_value = 0
         token.web3.eth.estimate_gas.return_value = 100_000
         token.web3.eth.account.sign_transaction.return_value = SimpleNamespace(
-            rawTransaction=b"signed", raw_transaction=b"signed"
+            raw_transaction=b"signed"
         )
         token.web3.eth.send_raw_transaction.return_value = b"hash"
         token.web3.eth.wait_for_transaction_receipt.return_value = {"status": 1}
