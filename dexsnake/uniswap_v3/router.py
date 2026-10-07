@@ -22,8 +22,9 @@ class UniswapV3Router:
         :param web3: A ``Web3`` instance connected to a blockchain node.
         :type web3: ``Web3``
         """
-        if str(web3.eth.chain_id) not in CONFIG.keys():
-            raise ValueError(f"Unsupported chain (chain ID = {web3.eth.chain_id})")
+        chain_id = str(web3.eth.chain_id)
+        if chain_id not in CONFIG:
+            raise ValueError(f"Unsupported chain (chain ID = {chain_id})")
         self.web3: Web3 = web3
         with open(
             os.path.join(
@@ -32,7 +33,7 @@ class UniswapV3Router:
             "r",
         ) as file:
             self.contract: Contract = self.web3.eth.contract(
-                address=CONFIG[str(self.web3.eth.chain_id)]["swap_router_02"],
+                address=CONFIG[chain_id]["swap_router_02"],
                 abi=json.load(file),
             )
 

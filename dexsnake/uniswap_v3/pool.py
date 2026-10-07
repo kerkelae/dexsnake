@@ -20,8 +20,9 @@ class UniswapV3Pool:
         :param address: The address of the pool contract.
         :type address: str
         """
-        if str(web3.eth.chain_id) not in CONFIG.keys():
-            raise ValueError(f"Unsupported chain (chain ID = {web3.eth.chain_id})")
+        chain_id = str(web3.eth.chain_id)
+        if chain_id not in CONFIG:
+            raise ValueError(f"Unsupported chain (chain ID = {chain_id})")
         self.web3 = web3
         with open(
             os.path.join(os.path.dirname(__file__), "abi", "UniswapV3Pool.json"), "r"
