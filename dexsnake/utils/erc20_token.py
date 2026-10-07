@@ -7,7 +7,7 @@ from web3 import Web3
 from web3.contract import Contract
 from web3.types import TxReceipt
 
-from .amounts import _to_base_units
+from .amounts import _from_base_units, _to_base_units
 from .transactions import _send_transaction
 
 
@@ -47,12 +47,13 @@ class ERC20Token:
         :return: The remaining allowance of tokens.
         :rtype: ``Decimal``
         """
-        return Decimal(
+        return _from_base_units(
             self.contract.functions.allowance(
                 self.web3.to_checksum_address(owner),
                 self.web3.to_checksum_address(spender),
-            ).call()
-        ) / (Decimal(10**self.decimals))
+            ).call(),
+            self.decimals,
+        )
 
     def approve(
         self,
@@ -101,11 +102,12 @@ class ERC20Token:
         :return: The balance of the account.
         :rtype: ``Decimal``
         """
-        return Decimal(
+        return _from_base_units(
             self.contract.functions.balanceOf(
                 self.web3.to_checksum_address(account)
-            ).call()
-        ) / Decimal(10**self.decimals)
+            ).call(),
+            self.decimals,
+        )
 
     @property
     def decimals(self) -> int:
@@ -147,8 +149,8 @@ class ERC20Token:
         :return: Total token supply.
         :rtype: ``Decimal``
         """
-        return Decimal(self.contract.functions.totalSupply().call()) / Decimal(
-            10**self.decimals
+        return _from_base_units(
+            self.contract.functions.totalSupply().call(), self.decimals
         )
 
     def transfer(

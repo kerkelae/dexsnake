@@ -6,6 +6,7 @@ from typing import Optional, Tuple
 from web3 import Web3
 from web3.contract import Contract
 
+from ..utils.amounts import _from_base_units
 from ..utils.erc20_token import ERC20Token
 from .config import CONFIG
 
@@ -73,8 +74,8 @@ class UniswapV2Pair:
             self.contract.functions.getReserves().call()
         )  # the third element is the timestamp when the reserves were last updated
         return (
-            Decimal(reserve_0) / Decimal(10**self.token_0.decimals),
-            Decimal(reserve_1) / Decimal(10**self.token_1.decimals),
+            _from_base_units(reserve_0, self.token_0.decimals),
+            _from_base_units(reserve_1, self.token_1.decimals),
         )
 
     def get_price(self) -> Decimal:
