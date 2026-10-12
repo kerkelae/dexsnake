@@ -41,7 +41,7 @@ jobs:
           expected = {
               "dexsnake.uniswap_v2": 3,
               "dexsnake.uniswap_v3": 3,
-              "dexsnake.utils": 1,
+              "dexsnake": 1,
           }
           for package, count in expected.items():
               assert len(list(files(package).joinpath("abi").glob("*.json"))) == count
