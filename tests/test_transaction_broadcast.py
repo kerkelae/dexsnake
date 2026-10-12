@@ -4,9 +4,9 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from dexsnake import ERC20Token
 from dexsnake.uniswap_v2.router import UniswapV2Router
 from dexsnake.uniswap_v3.router import UniswapV3Router
-from dexsnake.utils.erc20_token import ERC20Token
 from dexsnake.utils.transactions import _send_transaction
 
 COMMON = {"account": "0xaccount", "private_key": "key", "gas": 21000, "gas_price": 1}

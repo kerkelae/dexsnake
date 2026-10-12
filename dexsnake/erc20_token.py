@@ -7,8 +7,8 @@ from web3 import Web3
 from web3.contract import Contract
 from web3.types import TxReceipt
 
-from .amounts import _from_base_units, _to_base_units
-from .transactions import _send_transaction
+from .utils.amounts import _from_base_units, _to_base_units
+from .utils.transactions import _send_transaction
 
 
 class ERC20Token:

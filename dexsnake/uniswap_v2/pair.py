@@ -6,8 +6,8 @@ from typing import Optional, Tuple
 from web3 import Web3
 from web3.contract import Contract
 
+from ..erc20_token import ERC20Token
 from ..utils.amounts import _from_base_units
-from ..utils.erc20_token import ERC20Token
 from .config import CONFIG
 
 

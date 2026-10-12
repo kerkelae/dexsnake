@@ -13,9 +13,9 @@ from decimal import Decimal
 import pytest
 from web3 import Web3
 
+from dexsnake import ERC20Token
 from dexsnake.uniswap_v2 import UniswapV2Router
 from dexsnake.uniswap_v3 import UniswapV3Router
-from dexsnake.utils.erc20_token import ERC20Token
 
 pytestmark = pytest.mark.fork
 

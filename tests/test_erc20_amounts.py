@@ -3,8 +3,8 @@ from decimal import Decimal, localcontext
 from types import SimpleNamespace
 from unittest.mock import Mock
 
+from dexsnake import ERC20Token
 from dexsnake.utils.amounts import _to_base_units
-from dexsnake.utils.erc20_token import ERC20Token
 
 
 class ERC20AmountTests(unittest.TestCase):

@@ -8,8 +8,8 @@ from web3 import Web3
 from web3.contract import Contract
 from web3.types import TxReceipt
 
+from ..erc20_token import ERC20Token
 from ..utils.amounts import _to_base_units
-from ..utils.erc20_token import ERC20Token
 from ..utils.transactions import _send_transaction
 from .config import CONFIG
 

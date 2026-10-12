@@ -6,7 +6,7 @@ from typing import Optional
 from web3 import Web3
 from web3.contract import Contract
 
-from ..utils.erc20_token import ERC20Token
+from ..erc20_token import ERC20Token
 from .config import CONFIG
 
 

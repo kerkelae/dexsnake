@@ -25,8 +25,8 @@ Uniswap V3
 .. autoclass:: dexsnake.uniswap_v3.UniswapV3Router
     :members:
 
-Utils
-#####
+ERC20 token
+###########
 
-.. autoclass:: dexsnake.utils.ERC20Token
+.. autoclass:: dexsnake.ERC20Token
     :members:
