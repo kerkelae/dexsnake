@@ -18,16 +18,11 @@ connect to the blockchain are:
 - **IPC**: Ideal when your application is hosted on the same physical or virtual
   machine as the blockchain node. IPC provides the quickest communication with the node.
 
-- **WebSocket**: Recommended for applications that connect remotely to a node.
-  WebSockets provide a faster connection than HTTP and are suitable for environments
-  where real-time updates from the blockchain are crucial.
-
 - **HTTP**: This is a versatile and widely used method that offers extensive
   compatibility with various nodes. It's particularly useful in situations where the
   simplicity of setup is a priority.
 
-The Python snippet below initializes how to configure each type of provider and
-initialize a Web3 instance.
+Choose a provider and use it to initialize a Web3 instance:
 
 .. code-block:: python
 
@@ -35,9 +30,6 @@ initialize a Web3 instance.
    
    # IPC
    provider = Web3.IPCProvider("/my/node/ipc/path")
-   
-   # WebSocket
-   provider = Web3.LegacyWebSocketProvider("wss://my-node-url")
    
    # HTTP
    provider = Web3.HTTPProvider("https://my-node-url")

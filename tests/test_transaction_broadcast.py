@@ -4,11 +4,10 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from dexsnake import ERC20Token
 from dexsnake.uniswap_v2.router import UniswapV2Router
 from dexsnake.uniswap_v3.router import UniswapV3Router
-from dexsnake.utils.erc20_token import ERC20Token
 from dexsnake.utils.transactions import _send_transaction
-
 
 COMMON = {"account": "0xaccount", "private_key": "key", "gas": 21000, "gas_price": 1}
 
@@ -112,7 +111,9 @@ def test_write_methods_handle_receipts(
     )
     build_transaction.return_value = {}
 
-    with patch(f"{cls.__module__}.ERC20Token", return_value=SimpleNamespace(decimals=18)):
+    with patch(
+        f"{cls.__module__}.ERC20Token", return_value=SimpleNamespace(decimals=18)
+    ):
         if status == 0:
             with pytest.raises(RuntimeError) as error:
                 getattr(instance, method_name)(**kwargs)

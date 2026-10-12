@@ -25,10 +25,10 @@ Homepage = "https://github.com/kerkelae/dexsnake"
 [tool.setuptools.package-data]
 "dexsnake.uniswap_v2" = ["abi/*.json"]
 "dexsnake.uniswap_v3" = ["abi/*.json"]
-"dexsnake.utils" = ["abi/*.json"]
+"dexsnake" = ["abi/*.json"]
 
 [tool.pytest.ini_options]
 markers = ["fork: tests using a local Anvil fork"]
 
 [tool.ruff.lint]
-select = ["E4", "E7", "E9", "F"]
+select = ["E4", "E7", "E9", "F", "I"]

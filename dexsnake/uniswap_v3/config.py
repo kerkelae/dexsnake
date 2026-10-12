@@ -43,4 +43,8 @@ CONFIG = {
         "factory": "0x7145F8aeef1f6510E92164038E1B6F8cB2c42Cbb",
         "swap_router_02": "0x7De04c96BE5159c3b5CeffC82aa176dc81281557",
     },
+    "11155111": {
+        "factory": "0x0227628f3F023bb0B980b67D528571c95c6DaC1c",
+        "swap_router_02": "0x3bFA4769FB09eefC5a80d6E87c3B9C650f7Ae48E",
+    },
 }

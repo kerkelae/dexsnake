@@ -7,8 +7,8 @@ from web3 import Web3
 from web3.contract import Contract
 from web3.types import TxReceipt
 
-from .amounts import _from_base_units, _to_base_units
-from .transactions import _send_transaction
+from .utils.amounts import _from_base_units, _to_base_units
+from .utils.transactions import _send_transaction
 
 
 class ERC20Token:
@@ -90,7 +90,9 @@ class ERC20Token:
             self.web3.to_checksum_address(spender),
             _to_base_units(value, self.decimals),
         )
-        return _send_transaction(self.web3, function, account, private_key, gas, gas_price)
+        return _send_transaction(
+            self.web3, function, account, private_key, gas, gas_price
+        )
 
     def balance_of(self, account: str) -> Decimal:
         """
@@ -187,4 +189,6 @@ class ERC20Token:
             self.web3.to_checksum_address(to),
             _to_base_units(value, self.decimals),
         )
-        return _send_transaction(self.web3, function, account, private_key, gas, gas_price)
+        return _send_transaction(
+            self.web3, function, account, private_key, gas, gas_price
+        )

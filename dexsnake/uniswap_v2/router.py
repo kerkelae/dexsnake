@@ -8,8 +8,8 @@ from web3 import Web3
 from web3.contract import Contract
 from web3.types import TxReceipt
 
+from ..erc20_token import ERC20Token
 from ..utils.amounts import _to_base_units
-from ..utils.erc20_token import ERC20Token
 from ..utils.transactions import _send_transaction
 from .config import CONFIG
 
@@ -91,7 +91,9 @@ class UniswapV2Router:
             self.web3.to_checksum_address(to),
             deadline,
         )
-        return _send_transaction(self.web3, function, account, private_key, gas, gas_price)
+        return _send_transaction(
+            self.web3, function, account, private_key, gas, gas_price
+        )
 
     def swap_tokens_for_exact_tokens(
         self,
@@ -149,4 +151,6 @@ class UniswapV2Router:
             self.web3.to_checksum_address(to),
             deadline,
         )
-        return _send_transaction(self.web3, function, account, private_key, gas, gas_price)
+        return _send_transaction(
+            self.web3, function, account, private_key, gas, gas_price
+        )
