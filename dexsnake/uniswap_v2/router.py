@@ -91,7 +91,9 @@ class UniswapV2Router:
             self.web3.to_checksum_address(to),
             deadline,
         )
-        return _send_transaction(self.web3, function, account, private_key, gas, gas_price)
+        return _send_transaction(
+            self.web3, function, account, private_key, gas, gas_price
+        )
 
     def swap_tokens_for_exact_tokens(
         self,
@@ -149,4 +151,6 @@ class UniswapV2Router:
             self.web3.to_checksum_address(to),
             deadline,
         )
-        return _send_transaction(self.web3, function, account, private_key, gas, gas_price)
+        return _send_transaction(
+            self.web3, function, account, private_key, gas, gas_price
+        )

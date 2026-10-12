@@ -6,7 +6,6 @@ from unittest.mock import MagicMock, patch
 from dexsnake.uniswap_v2.router import UniswapV2Router
 from dexsnake.uniswap_v3.router import UniswapV3Router
 
-
 COMMON = {
     "account": "account",
     "private_key": "key",

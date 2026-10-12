@@ -90,7 +90,9 @@ class ERC20Token:
             self.web3.to_checksum_address(spender),
             _to_base_units(value, self.decimals),
         )
-        return _send_transaction(self.web3, function, account, private_key, gas, gas_price)
+        return _send_transaction(
+            self.web3, function, account, private_key, gas, gas_price
+        )
 
     def balance_of(self, account: str) -> Decimal:
         """
@@ -187,4 +189,6 @@ class ERC20Token:
             self.web3.to_checksum_address(to),
             _to_base_units(value, self.decimals),
         )
-        return _send_transaction(self.web3, function, account, private_key, gas, gas_price)
+        return _send_transaction(
+            self.web3, function, account, private_key, gas, gas_price
+        )

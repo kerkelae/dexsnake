@@ -103,7 +103,9 @@ class UniswapV3Router:
         }
         swap_data = self.contract.encode_abi("exactInputSingle", args=[params])
         function = self.contract.functions.multicall(deadline, [swap_data])
-        return _send_transaction(self.web3, function, account, private_key, gas, gas_price)
+        return _send_transaction(
+            self.web3, function, account, private_key, gas, gas_price
+        )
 
     def exact_output_single(
         self,
@@ -170,4 +172,6 @@ class UniswapV3Router:
         }
         swap_data = self.contract.encode_abi("exactOutputSingle", args=[params])
         function = self.contract.functions.multicall(deadline, [swap_data])
-        return _send_transaction(self.web3, function, account, private_key, gas, gas_price)
+        return _send_transaction(
+            self.web3, function, account, private_key, gas, gas_price
+        )

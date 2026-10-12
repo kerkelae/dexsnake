@@ -27,7 +27,9 @@ jobs:
       - run: python -m pytest
         env:
           WEB3_RPC_URL: ${{ vars.WEB3_RPC_URL }}
-      - run: python -m ruff check .
+      - run: |
+          python -m ruff check .
+          python -m ruff format --check .
         if: matrix.python-version == '3.14'
       - run: |
           python -m build

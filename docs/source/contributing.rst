@@ -15,5 +15,7 @@ The fork tests send transactions only to local Anvil.
 
 .. code-block:: console
 
+   python -m ruff check --fix --select I .
+   python -m ruff format .
    python -m pytest
    python -m ruff check .

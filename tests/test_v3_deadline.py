@@ -38,10 +38,13 @@ def test_swap_deadline_is_enforced_by_multicall(
     router.contract.encode_abi.return_value = "0xswap"
     router.contract.functions.multicall.return_value.build_transaction.return_value = {}
 
-    with patch(
-        "dexsnake.uniswap_v3.router.ERC20Token",
-        return_value=SimpleNamespace(decimals=18),
-    ), patch("dexsnake.uniswap_v3.router.time.time", return_value=1000):
+    with (
+        patch(
+            "dexsnake.uniswap_v3.router.ERC20Token",
+            return_value=SimpleNamespace(decimals=18),
+        ),
+        patch("dexsnake.uniswap_v3.router.time.time", return_value=1000),
+    ):
         getattr(router, method_name)(
             **amounts,
             token_in="0xin",
