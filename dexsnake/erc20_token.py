@@ -7,8 +7,8 @@ from web3 import Web3
 from web3.contract import Contract
 from web3.types import TxReceipt
 
-from .utils.amounts import _from_base_units, _to_base_units
-from .utils.transactions import _send_transaction
+from .amounts import _from_base_units, _to_base_units
+from .transactions import _send_transaction
 
 
 class ERC20Token:
@@ -59,7 +59,6 @@ class ERC20Token:
         self,
         spender: str,
         value: Decimal,
-        account: str,
         private_key: str,
         gas: Optional[int] = None,
         gas_price: Optional[int] = None,
@@ -72,8 +71,6 @@ class ERC20Token:
         :type spender: str
         :param value: The amount of tokens to approve.
         :type value: ``Decimal``
-        :param account: The account address from which the transaction will be sent.
-        :type account: str
         :param private_key: The private key of the account.
         :type private_key: str
         :param gas: The gas limit for the transaction. If not provided, it will be
@@ -90,9 +87,7 @@ class ERC20Token:
             self.web3.to_checksum_address(spender),
             _to_base_units(value, self.decimals),
         )
-        return _send_transaction(
-            self.web3, function, account, private_key, gas, gas_price
-        )
+        return _send_transaction(self.web3, function, private_key, gas, gas_price)
 
     def balance_of(self, account: str) -> Decimal:
         """
@@ -159,7 +154,6 @@ class ERC20Token:
         self,
         to: str,
         value: Decimal,
-        account: str,
         private_key: str,
         gas: Optional[int] = None,
         gas_price: Optional[int] = None,
@@ -171,8 +165,6 @@ class ERC20Token:
         :type to: str
         :param value: The amount of tokens to transfer.
         :type value: ``Decimal``
-        :param account: The account address from which the transaction will be sent.
-        :type account: str
         :param private_key: The private key of the account.
         :type private_key: str
         :param gas: The gas limit for the transaction. If not provided, it will be
@@ -189,6 +181,4 @@ class ERC20Token:
             self.web3.to_checksum_address(to),
             _to_base_units(value, self.decimals),
         )
-        return _send_transaction(
-            self.web3, function, account, private_key, gas, gas_price
-        )
+        return _send_transaction(self.web3, function, private_key, gas, gas_price)

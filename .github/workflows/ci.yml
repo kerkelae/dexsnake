@@ -32,6 +32,11 @@ jobs:
           python -m ruff format --check .
         if: matrix.python-version == '3.14'
       - run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc
+          sphinx-build -b html docs/source docs/_build/html
+        if: matrix.python-version == '3.14'
+      - run: |
           python -m build
           python -m pip install --force-reinstall --no-deps dist/*.whl
           cd "$RUNNER_TEMP"

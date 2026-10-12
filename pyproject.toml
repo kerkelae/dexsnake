@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dexsnake"
-version = "0.0.1"
+version = "0.1.0"
 dependencies = ["web3>=7,<8"]
 authors = [
   { name="Leevi Kerkelä", email="leevi.kerkela@protonmail.com" },
@@ -21,6 +21,7 @@ classifiers = [
 
 [project.urls]
 Homepage = "https://github.com/kerkelae/dexsnake"
+Documentation = "https://dexsnake.readthedocs.io/"
 
 [tool.setuptools.package-data]
 "dexsnake.uniswap_v2" = ["abi/*.json"]

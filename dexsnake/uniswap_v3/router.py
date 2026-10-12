@@ -8,9 +8,9 @@ from web3 import Web3
 from web3.contract import Contract
 from web3.types import TxReceipt
 
+from ..amounts import _to_base_units
 from ..erc20_token import ERC20Token
-from ..utils.amounts import _to_base_units
-from ..utils.transactions import _send_transaction
+from ..transactions import _send_transaction
 from .config import CONFIG
 
 
@@ -45,7 +45,6 @@ class UniswapV3Router:
         token_out: str,
         fee: int,
         recipient: str,
-        account: str,
         private_key: str,
         deadline: Optional[int] = None,
         gas: Optional[int] = None,
@@ -69,8 +68,6 @@ class UniswapV3Router:
         :type fee: int
         :param recipient: The recipient of the output tokens.
         :type recipient: str
-        :param account: The account address from which the transaction will be sent.
-        :type account: str
         :param private_key: The private key of the account.
         :type private_key: str
         :param deadline: The Unix timestamp after which the transaction will revert. If
@@ -103,9 +100,7 @@ class UniswapV3Router:
         }
         swap_data = self.contract.encode_abi("exactInputSingle", args=[params])
         function = self.contract.functions.multicall(deadline, [swap_data])
-        return _send_transaction(
-            self.web3, function, account, private_key, gas, gas_price
-        )
+        return _send_transaction(self.web3, function, private_key, gas, gas_price)
 
     def exact_output_single(
         self,
@@ -115,7 +110,6 @@ class UniswapV3Router:
         token_out: str,
         fee: int,
         recipient: str,
-        account: str,
         private_key: str,
         deadline: Optional[int] = None,
         gas: Optional[int] = None,
@@ -138,8 +132,6 @@ class UniswapV3Router:
         :type fee: int
         :param recipient: The recipient of the output tokens.
         :type recipient: str
-        :param account: The account address from which the transaction will be sent.
-        :type account: str
         :param private_key: The private key of the account.
         :type private_key: str
         :param deadline: The Unix timestamp after which the transaction will revert. If
@@ -172,6 +164,4 @@ class UniswapV3Router:
         }
         swap_data = self.contract.encode_abi("exactOutputSingle", args=[params])
         function = self.contract.functions.multicall(deadline, [swap_data])
-        return _send_transaction(
-            self.web3, function, account, private_key, gas, gas_price
-        )
+        return _send_transaction(self.web3, function, private_key, gas, gas_price)
