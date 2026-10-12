@@ -8,17 +8,16 @@ from web3.types import TxReceipt
 def _send_transaction(
     web3: Web3,
     function: ContractFunction,
-    account: str,
     private_key: str,
     gas: Optional[int],
     gas_price: Optional[int],
 ) -> TxReceipt:
-    account_checksum = web3.to_checksum_address(account)
+    account = web3.eth.account.from_key(private_key).address
     if gas_price is None:
         gas_price = web3.eth.gas_price
     tx_params = {
-        "from": account_checksum,
-        "nonce": web3.eth.get_transaction_count(account_checksum, "pending"),
+        "from": account,
+        "nonce": web3.eth.get_transaction_count(account, "pending"),
         "gasPrice": gas_price,
     }
     if gas is not None:

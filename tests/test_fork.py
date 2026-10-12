@@ -146,9 +146,7 @@ def test_approve(fork_state):
     weth = ERC20Token(web3, WETH)
     router = UniswapV2Router(web3)
 
-    receipt = weth.approve(
-        router.contract.address, Decimal("0.02"), account.address, account.key.hex()
-    )
+    receipt = weth.approve(router.contract.address, Decimal("0.02"), account.key.hex())
 
     assert receipt["status"] == 1
     assert weth.allowance(account.address, router.contract.address) == Decimal("0.02")
@@ -161,9 +159,7 @@ def test_transfer(fork_state):
     sender_before = weth.balance_of(account.address)
     recipient_before = weth.balance_of(recipient)
 
-    receipt = weth.transfer(
-        recipient, Decimal("0.01"), account.address, account.key.hex()
-    )
+    receipt = weth.transfer(recipient, Decimal("0.01"), account.key.hex())
 
     assert receipt["status"] == 1
     assert weth.balance_of(account.address) == sender_before - Decimal("0.01")
@@ -176,9 +172,7 @@ def test_v2_swap(fork_state):
     usdc = ERC20Token(web3, USDC)
     router = UniswapV2Router(web3)
     amount_in = Decimal("0.01")
-    approval = weth.approve(
-        router.contract.address, amount_in, account.address, account.key.hex()
-    )
+    approval = weth.approve(router.contract.address, amount_in, account.key.hex())
     assert approval["status"] == 1
     weth_before = weth.balance_of(account.address)
     usdc_before = usdc.balance_of(account.address)
@@ -188,7 +182,6 @@ def test_v2_swap(fork_state):
         amount_out_min=Decimal("0.01"),
         path=[WETH, USDC],
         to=account.address,
-        account=account.address,
         private_key=account.key.hex(),
         deadline=web3.eth.get_block("latest")["timestamp"] + 300,
     )
@@ -204,9 +197,7 @@ def test_v3_swap(fork_state):
     usdc = ERC20Token(web3, USDC)
     router = UniswapV3Router(web3)
     amount_in = Decimal("0.01")
-    approval = weth.approve(
-        router.contract.address, amount_in, account.address, account.key.hex()
-    )
+    approval = weth.approve(router.contract.address, amount_in, account.key.hex())
     assert approval["status"] == 1
     weth_before = weth.balance_of(account.address)
     usdc_before = usdc.balance_of(account.address)
@@ -218,7 +209,6 @@ def test_v3_swap(fork_state):
         token_out=USDC,
         fee=500,
         recipient=account.address,
-        account=account.address,
         private_key=account.key.hex(),
         deadline=web3.eth.get_block("latest")["timestamp"] + 300,
     )
@@ -235,9 +225,7 @@ def test_v2_swap_for_exact_output(fork_state):
     router = UniswapV2Router(web3)
     amount_out = Decimal("1")
     amount_in_max = Decimal("0.01")
-    approval = weth.approve(
-        router.contract.address, amount_in_max, account.address, account.key.hex()
-    )
+    approval = weth.approve(router.contract.address, amount_in_max, account.key.hex())
     assert approval["status"] == 1
     weth_before = weth.balance_of(account.address)
     usdc_before = usdc.balance_of(account.address)
@@ -247,7 +235,6 @@ def test_v2_swap_for_exact_output(fork_state):
         amount_in_max=amount_in_max,
         path=[WETH, USDC],
         to=account.address,
-        account=account.address,
         private_key=account.key.hex(),
         deadline=web3.eth.get_block("latest")["timestamp"] + 300,
     )
@@ -265,9 +252,7 @@ def test_v3_swap_for_exact_output(fork_state):
     router = UniswapV3Router(web3)
     amount_out = Decimal("1")
     amount_in_max = Decimal("0.01")
-    approval = weth.approve(
-        router.contract.address, amount_in_max, account.address, account.key.hex()
-    )
+    approval = weth.approve(router.contract.address, amount_in_max, account.key.hex())
     assert approval["status"] == 1
     weth_before = weth.balance_of(account.address)
     usdc_before = usdc.balance_of(account.address)
@@ -279,7 +264,6 @@ def test_v3_swap_for_exact_output(fork_state):
         token_out=USDC,
         fee=500,
         recipient=account.address,
-        account=account.address,
         private_key=account.key.hex(),
         deadline=web3.eth.get_block("latest")["timestamp"] + 300,
     )

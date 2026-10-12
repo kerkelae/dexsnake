@@ -5,11 +5,11 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from dexsnake import ERC20Token
+from dexsnake.transactions import _send_transaction
 from dexsnake.uniswap_v2.router import UniswapV2Router
 from dexsnake.uniswap_v3.router import UniswapV3Router
-from dexsnake.utils.transactions import _send_transaction
 
-COMMON = {"account": "0xaccount", "private_key": "key", "gas": 21000, "gas_price": 1}
+COMMON = {"private_key": "key", "gas": 21000, "gas_price": 1}
 
 
 @pytest.mark.parametrize(
@@ -91,6 +91,7 @@ def test_write_methods_handle_receipts(
 ):
     web3 = MagicMock()
     web3.to_checksum_address.side_effect = lambda address: address
+    web3.eth.account.from_key.return_value.address = "0xaccount"
     web3.eth.get_transaction_count.return_value = 0
     web3.eth.account.sign_transaction.return_value = SimpleNamespace(
         raw_transaction=b"signed transaction"
@@ -127,6 +128,7 @@ def test_write_methods_handle_receipts(
         {"from": "0xaccount", "nonce": 0, "gasPrice": 1, "gas": 21000}
     )
     web3.eth.get_transaction_count.assert_called_once_with("0xaccount", "pending")
+    web3.eth.account.from_key.assert_called_once_with("key")
     web3.eth.estimate_gas.assert_not_called()
     web3.eth.account.sign_transaction.assert_called_once()
     web3.eth.send_raw_transaction.assert_called_once_with(b"signed transaction")
@@ -136,6 +138,7 @@ def test_write_methods_handle_receipts(
 def test_unspecified_gas_is_left_for_web3_to_estimate():
     web3 = MagicMock()
     web3.to_checksum_address.side_effect = lambda address: address
+    web3.eth.account.from_key.return_value.address = "0xaccount"
     web3.eth.gas_price = 1
     web3.eth.get_transaction_count.return_value = 0
     web3.eth.account.sign_transaction.return_value = SimpleNamespace(
@@ -145,9 +148,10 @@ def test_unspecified_gas_is_left_for_web3_to_estimate():
     function = MagicMock()
     function.build_transaction.return_value = {}
 
-    _send_transaction(web3, function, "0xaccount", "key", None, None)
+    _send_transaction(web3, function, "key", None, None)
 
     function.build_transaction.assert_called_once_with(
         {"from": "0xaccount", "nonce": 0, "gasPrice": 1}
     )
+    web3.eth.account.from_key.assert_called_once_with("key")
     web3.eth.estimate_gas.assert_not_called()

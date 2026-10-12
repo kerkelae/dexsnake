@@ -38,7 +38,7 @@ class UniswapV3Pool:
     @property
     def token_0(self) -> ERC20Token:
         """
-        Returns the ``ERC20Token`` instance representing the first token in the pair.
+        Returns the ``ERC20Token`` instance representing the first token in the pool.
 
         :return: An ``ERC20Token`` instance representing the first token.
         :rtype: ``ERC20Token``
@@ -52,7 +52,7 @@ class UniswapV3Pool:
     @property
     def token_1(self) -> ERC20Token:
         """
-        Returns the ``ERC20Token`` instance representing the second token in the pair.
+        Returns the ``ERC20Token`` instance representing the second token in the pool.
 
         :return: An ``ERC20Token`` instance representing the second token.
         :rtype: ``ERC20Token``

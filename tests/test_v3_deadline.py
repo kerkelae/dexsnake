@@ -51,7 +51,6 @@ def test_swap_deadline_is_enforced_by_multicall(
             token_out="0xout",
             fee=3000,
             recipient="0xto",
-            account="0xaccount",
             private_key="key",
             deadline=deadline,
             gas=21000,

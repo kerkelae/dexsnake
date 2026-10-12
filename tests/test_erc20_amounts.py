@@ -5,7 +5,7 @@ from unittest.mock import Mock
 import pytest
 
 from dexsnake import ERC20Token
-from dexsnake.utils.amounts import _to_base_units
+from dexsnake.amounts import _to_base_units
 
 
 def make_token(decimals=6):
@@ -14,6 +14,7 @@ def make_token(decimals=6):
     token.contract = Mock()
     token.web3 = Mock()
     token.web3.to_checksum_address.side_effect = lambda address: address
+    token.web3.eth.account.from_key.return_value.address = "account"
     token.web3.eth.gas_price = 1
     token.web3.eth.get_transaction_count.return_value = 0
     token.web3.eth.estimate_gas.return_value = 100_000
@@ -33,7 +34,7 @@ def test_approve_and_transfer_use_exact_base_units(method):
     with localcontext() as context:
         context.prec = 4
         receipt = getattr(token, method)(
-            "destination", Decimal("123456789.123456"), "account", "key"
+            "destination", Decimal("123456789.123456"), "key"
         )
 
     assert receipt == {"status": 1}
@@ -52,7 +53,7 @@ def test_zero_and_integer_amounts_are_exact():
 def test_overprecision_is_rejected_before_building_transaction(method):
     token = make_token()
     with pytest.raises(ValueError, match="decimal places"):
-        getattr(token, method)("destination", Decimal("1.0000001"), "account", "key")
+        getattr(token, method)("destination", Decimal("1.0000001"), "key")
     getattr(token.contract.functions, method).assert_not_called()
     token.web3.eth.send_raw_transaction.assert_not_called()
 

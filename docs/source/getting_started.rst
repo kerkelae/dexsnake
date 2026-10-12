@@ -22,20 +22,21 @@ connect to the blockchain are:
   compatibility with various nodes. It's particularly useful in situations where the
   simplicity of setup is a priority.
 
-Choose a provider and use it to initialize a Web3 instance:
+For IPC:
 
 .. code-block:: python
 
    from web3 import Web3
-   
-   # IPC
-   provider = Web3.IPCProvider("/my/node/ipc/path")
-   
-   # HTTP
-   provider = Web3.HTTPProvider("https://my-node-url")
-   
-   # Initialize the Web3 instance
-   web3 = Web3(provider)
+
+   web3 = Web3(Web3.IPCProvider("/my/node/ipc/path"))
+
+Or use HTTP:
+
+.. code-block:: python
+
+   from web3 import Web3
+
+   web3 = Web3(Web3.HTTPProvider("https://my-node-url"))
 
 After configuring the provider and initializing the Web3 instance, you are ready to use
 Dexsnake.
@@ -54,7 +55,7 @@ public key and a private key. The public key determines your account's address o
 blockchain, while the private key is used to sign transactions, proving ownership of the
 account. It's crucial to keep your private key secure, as anyone with access to it can
 steal your assets! One way to manage sensitive information is by using environment
-variables, which your Python code can then access securely:
+variables, which your Python code can then read:
 
 .. code-block:: python
 

@@ -8,7 +8,6 @@ from dexsnake.uniswap_v2.router import UniswapV2Router
 from dexsnake.uniswap_v3.router import UniswapV3Router
 
 COMMON = {
-    "account": "account",
     "private_key": "key",
     "deadline": 1234,
     "gas": 21000,
@@ -80,6 +79,7 @@ def make_router(cls):
     router = object.__new__(cls)
     router.web3 = MagicMock()
     router.web3.to_checksum_address.side_effect = lambda address: address
+    router.web3.eth.account.from_key.return_value.address = "account"
     router.web3.eth.account.sign_transaction.return_value = SimpleNamespace(
         raw_transaction=b"signed"
     )

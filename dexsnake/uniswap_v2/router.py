@@ -8,9 +8,9 @@ from web3 import Web3
 from web3.contract import Contract
 from web3.types import TxReceipt
 
+from ..amounts import _to_base_units
 from ..erc20_token import ERC20Token
-from ..utils.amounts import _to_base_units
-from ..utils.transactions import _send_transaction
+from ..transactions import _send_transaction
 from .config import CONFIG
 
 
@@ -41,7 +41,6 @@ class UniswapV2Router:
         amount_out_min: Decimal,
         path: List[str],
         to: str,
-        account: str,
         private_key: str,
         deadline: Optional[int] = None,
         gas: Optional[int] = None,
@@ -62,8 +61,6 @@ class UniswapV2Router:
         :type path: List[str]
         :param to: The recipient of the output tokens.
         :type to: str
-        :param account: The account address from which the transaction will be sent.
-        :type account: str
         :param private_key: The private key of the account.
         :type private_key: str
         :param deadline: The Unix timestamp after which the transaction will revert. If
@@ -72,13 +69,15 @@ class UniswapV2Router:
         :param gas: The gas limit for the transaction. If not provided, it will be
             estimated automatically.
         :type gas: int, optional
-        :param gas_price: The gas price for the transaction in wei (i.e., 1e-18 ETH). If
+        :param gas_price: The gas price for the transaction in wei. If
             not provided, the current network gas price will be used.
         :type gas_price: int, optional
 
         :return: The transaction receipt.
         :rtype: TxReceipt
         """
+        if len(path) < 2:
+            raise ValueError("path must contain at least two token addresses")
         if deadline is None:
             deadline = int(time.time() + 300)
         path_checksum = [self.web3.to_checksum_address(address) for address in path]
@@ -91,9 +90,7 @@ class UniswapV2Router:
             self.web3.to_checksum_address(to),
             deadline,
         )
-        return _send_transaction(
-            self.web3, function, account, private_key, gas, gas_price
-        )
+        return _send_transaction(self.web3, function, private_key, gas, gas_price)
 
     def swap_tokens_for_exact_tokens(
         self,
@@ -101,7 +98,6 @@ class UniswapV2Router:
         amount_in_max: Decimal,
         path: List[str],
         to: str,
-        account: str,
         private_key: str,
         deadline: Optional[int] = None,
         gas: Optional[int] = None,
@@ -122,8 +118,6 @@ class UniswapV2Router:
         :type path: List[str]
         :param to: The recipient of the output tokens.
         :type to: str
-        :param account: The account address from which the transaction will be sent.
-        :type account: str
         :param private_key: The private key of the account.
         :type private_key: str
         :param deadline: The Unix timestamp after which the transaction will revert. If
@@ -132,13 +126,15 @@ class UniswapV2Router:
         :param gas: The gas limit for the transaction. If not provided, it will be
             estimated automatically.
         :type gas: int, optional
-        :param gas_price: The gas price for the transaction in wei (i.e., 1e-18 ETH). If
+        :param gas_price: The gas price for the transaction in wei. If
             not provided, the current network gas price will be used.
         :type gas_price: int, optional
 
         :return: The transaction receipt.
         :rtype: TxReceipt
         """
+        if len(path) < 2:
+            raise ValueError("path must contain at least two token addresses")
         if deadline is None:
             deadline = int(time.time() + 300)
         path_checksum = [self.web3.to_checksum_address(address) for address in path]
@@ -151,6 +147,4 @@ class UniswapV2Router:
             self.web3.to_checksum_address(to),
             deadline,
         )
-        return _send_transaction(
-            self.web3, function, account, private_key, gas, gas_price
-        )
+        return _send_transaction(self.web3, function, private_key, gas, gas_price)
