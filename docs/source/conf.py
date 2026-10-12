@@ -4,6 +4,8 @@
 # list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+from docutils import nodes
+
 # -- Path setup --------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -80,3 +82,16 @@ pygments_dark_style = "stata-dark"
 
 # Ensure that typehints are shown correctly for properties
 autodoc_typehints = "description"
+
+
+def _open_tutorial_links_in_new_tab(_app, doctree, docname):
+    if docname not in {"uniswap_v2_tutorial", "uniswap_v3_tutorial"}:
+        return
+    for link in doctree.findall(nodes.reference):
+        if link.get("refuri", "").startswith(("http://", "https://")):
+            link["target"] = "_blank"
+            link["rel"] = "noopener noreferrer"
+
+
+def setup(app):
+    app.connect("doctree-resolved", _open_tutorial_links_in_new_tab)
