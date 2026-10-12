@@ -6,4 +6,5 @@
 
    tutorials
    reference
+   contributing
    GitHub <https://github.com/kerkelae/dexsnake>
