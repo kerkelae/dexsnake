@@ -22,8 +22,7 @@ connect to the blockchain are:
   compatibility with various nodes. It's particularly useful in situations where the
   simplicity of setup is a priority.
 
-The Python snippet below initializes how to configure each type of provider and
-initialize a Web3 instance.
+Choose a provider and use it to initialize a Web3 instance:
 
 .. code-block:: python
 

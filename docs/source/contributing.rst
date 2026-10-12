@@ -20,12 +20,10 @@ Format the code by running:
 Development environment
 -----------------------
 
-Create a virtual environment and install the package and development dependencies:
+Install the package and development dependencies in your environment:
 
 .. code-block:: console
 
-   python -m venv .venv
-   source .venv/bin/activate
    python -m pip install -e .
    python -m pip install -r requirements-dev.txt
 
@@ -51,7 +49,6 @@ Build the documentation by running:
 
 .. code-block:: console
 
-   python -m pip install -r docs/requirements.txt
    sphinx-build -b html docs/source docs/_build/html
 
 This generates a local copy at ``docs/_build/html/index.html``.

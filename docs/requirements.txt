@@ -1,4 +1,5 @@
 furo
 ipython
 nbsphinx
+python-dotenv
 sphinx
