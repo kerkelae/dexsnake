@@ -28,8 +28,8 @@ def test_swap_deadline_is_enforced_by_multicall(
 ):
     web3 = MagicMock()
     web3.to_checksum_address.side_effect = lambda address: address
-    web3.eth.account.sign_transaction.return_value = SimpleNamespace(
-        raw_transaction=b"signed transaction"
+    web3.eth.account.from_key.return_value.sign_transaction.return_value = (
+        SimpleNamespace(raw_transaction=b"signed transaction")
     )
     web3.eth.send_raw_transaction.return_value = b"transaction hash"
     router = object.__new__(UniswapV3Router)

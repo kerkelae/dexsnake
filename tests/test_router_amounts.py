@@ -80,8 +80,8 @@ def make_router(cls):
     router.web3 = MagicMock()
     router.web3.to_checksum_address.side_effect = lambda address: address
     router.web3.eth.account.from_key.return_value.address = "account"
-    router.web3.eth.account.sign_transaction.return_value = SimpleNamespace(
-        raw_transaction=b"signed"
+    router.web3.eth.account.from_key.return_value.sign_transaction.return_value = (
+        SimpleNamespace(raw_transaction=b"signed")
     )
     router.contract = MagicMock()
     router.contract.encode_abi.return_value = "0xswap"
@@ -146,4 +146,4 @@ def test_unrepresentable_amounts_fail_before_swap_build(
             getattr(router.contract.functions, contract_function).assert_not_called()
         else:
             router.contract.encode_abi.assert_not_called()
-        router.web3.eth.account.sign_transaction.assert_not_called()
+        router.web3.eth.account.from_key.return_value.sign_transaction.assert_not_called()

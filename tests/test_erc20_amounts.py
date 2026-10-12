@@ -18,8 +18,8 @@ def make_token(decimals=6):
     token.web3.eth.gas_price = 1
     token.web3.eth.get_transaction_count.return_value = 0
     token.web3.eth.estimate_gas.return_value = 100_000
-    token.web3.eth.account.sign_transaction.return_value = SimpleNamespace(
-        raw_transaction=b"signed"
+    token.web3.eth.account.from_key.return_value.sign_transaction.return_value = (
+        SimpleNamespace(raw_transaction=b"signed")
     )
     token.web3.eth.send_raw_transaction.return_value = b"hash"
     token.web3.eth.wait_for_transaction_receipt.return_value = {"status": 1}
