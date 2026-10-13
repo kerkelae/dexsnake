@@ -55,13 +55,6 @@ archive RPC:
 
    python -m pytest
 
-Check style before submitting changes:
-
-.. code-block:: console
-
-   python -m ruff check .
-   python -m ruff format --check .
-
 Documentation
 -------------
 
