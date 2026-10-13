@@ -5,6 +5,7 @@ on:
     types: [published]
 
 permissions:
+  actions: read
   contents: read
 
 jobs:
@@ -13,9 +14,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v7
         with:
           python-version: '3.14'
+      - name: Check release provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          tag_sha="$(git rev-parse "refs/tags/${RELEASE_TAG}^{commit}")"
+          if ! git merge-base --is-ancestor "$tag_sha" origin/main; then
+            echo "Release tag must point to a commit on main" >&2
+            exit 1
+          fi
+
+          ci_shas="$(gh api --method GET \
+            "repos/${GITHUB_REPOSITORY}/actions/workflows/ci.yml/runs" \
+            -f head_sha="$tag_sha" -f branch=main -f event=push -f status=success \
+            --jq '.workflow_runs[] | select(.head_branch == "main" and .event == "push" and .conclusion == "success") | .head_sha')"
+          if ! grep -Fxq "$tag_sha" <<< "$ci_shas"; then
+            echo "Release tag commit must have a successful CI run on main" >&2
+            exit 1
+          fi
       - name: Check release version
         env:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
