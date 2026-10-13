@@ -103,7 +103,18 @@ def test_write_methods_handle_receipts(
     instance = object.__new__(cls)
     instance.web3 = web3
     instance.contract = MagicMock()
+    instance.address = "0xtoken"
     instance._decimals = 18
+    if cls is ERC20Token:
+        event_name = "Approval" if method_name == "approve" else "Transfer"
+        event_args = (
+            {"owner": "0xaccount", "spender": "0xspender", "value": 10**18}
+            if method_name == "approve"
+            else {"from": "0xaccount", "to": "0xto", "value": 10**18}
+        )
+        getattr(instance.contract.events, event_name)().process_receipt.return_value = [
+            {"address": "0xtoken", "args": event_args}
+        ]
     function = getattr(instance.contract.functions, contract_function)
     build_transaction = (
         instance.contract.functions.multicall.return_value.build_transaction
@@ -128,7 +139,10 @@ def test_write_methods_handle_receipts(
         {"from": "0xaccount", "nonce": 0, "gasPrice": 1, "gas": 21000}
     )
     web3.eth.get_transaction_count.assert_called_once_with("0xaccount", "pending")
-    web3.eth.account.from_key.assert_called_once_with("key")
+    assert web3.eth.account.from_key.call_count == (
+        2 if cls is ERC20Token and status == 1 else 1
+    )
+    web3.eth.account.from_key.assert_called_with("key")
     web3.eth.estimate_gas.assert_not_called()
     web3.eth.account.from_key.return_value.sign_transaction.assert_called_once()
     web3.eth.send_raw_transaction.assert_called_once_with(b"signed transaction")

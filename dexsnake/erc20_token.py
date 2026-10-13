@@ -5,6 +5,7 @@ from typing import Optional
 
 from web3 import Web3
 from web3.contract import Contract
+from web3.logs import DISCARD
 from web3.types import TxReceipt
 
 from .amounts import _from_base_units, _to_base_units
@@ -34,6 +35,25 @@ class ERC20Token:
         self._name: Optional[str] = None
         self._symbol: Optional[str] = None
         self._decimals: Optional[int] = None
+
+    def _require_event(
+        self, receipt: TxReceipt, event_name: str, expected_args: dict
+    ) -> None:
+        """Confirm that this transaction emitted the requested token operation."""
+        event = getattr(self.contract.events, event_name)()
+        for log in event.process_receipt(receipt, errors=DISCARD):
+            if log["address"] == self.address and all(
+                log["args"][name] == value for name, value in expected_args.items()
+            ):
+                return
+        tx_hash = receipt.get("transactionHash")
+        transaction = (
+            f"Transaction {Web3.to_hex(tx_hash)}" if tx_hash else "Transaction"
+        )
+        raise RuntimeError(
+            f"{transaction} was mined without a matching ERC-20 {event_name} event; "
+            "the operation could not be confirmed. Inspect token state before retrying"
+        )
 
     def allowance(self, owner: str, spender: str) -> Decimal:
         """
@@ -80,14 +100,28 @@ class ERC20Token:
             current network gas price will be used.
         :type gas_price: int, optional
 
+        A receipt is returned only when the token emits a matching ``Approval`` event.
+        Tokens that omit this standard event cannot be confirmed by this method.
+        If confirmation fails, the transaction has still been mined; inspect token
+        state before retrying.
+
         :return: The transaction receipt.
         :rtype: TxReceipt
         """
+        spender = self.web3.to_checksum_address(spender)
+        amount = _to_base_units(value, self.decimals)
         function = self.contract.functions.approve(
-            self.web3.to_checksum_address(spender),
-            _to_base_units(value, self.decimals),
+            spender,
+            amount,
         )
-        return _send_transaction(self.web3, function, private_key, gas, gas_price)
+        receipt = _send_transaction(self.web3, function, private_key, gas, gas_price)
+        owner = self.web3.eth.account.from_key(private_key).address
+        self._require_event(
+            receipt,
+            "Approval",
+            {"owner": owner, "spender": spender, "value": amount},
+        )
+        return receipt
 
     def balance_of(self, account: str) -> Decimal:
         """
@@ -174,11 +208,25 @@ class ERC20Token:
             current network gas price will be used.
         :type gas_price: int, optional
 
+        A receipt is returned only when the token emits a matching ``Transfer`` event.
+        Tokens that omit this standard event cannot be confirmed by this method.
+        If confirmation fails, the transaction has still been mined; inspect token
+        state before retrying.
+
         :return: The transaction receipt.
         :rtype: TxReceipt
         """
+        to = self.web3.to_checksum_address(to)
+        amount = _to_base_units(value, self.decimals)
         function = self.contract.functions.transfer(
-            self.web3.to_checksum_address(to),
-            _to_base_units(value, self.decimals),
+            to,
+            amount,
         )
-        return _send_transaction(self.web3, function, private_key, gas, gas_price)
+        receipt = _send_transaction(self.web3, function, private_key, gas, gas_price)
+        sender = self.web3.eth.account.from_key(private_key).address
+        self._require_event(
+            receipt,
+            "Transfer",
+            {"from": sender, "to": to, "value": amount},
+        )
+        return receipt
