@@ -11,6 +11,7 @@ from dexsnake.amounts import _to_base_units
 def make_token(decimals=6):
     token = ERC20Token.__new__(ERC20Token)
     token._decimals = decimals
+    token.address = "token"
     token.contract = Mock()
     token.web3 = Mock()
     token.web3.to_checksum_address.side_effect = lambda address: address
@@ -25,6 +26,26 @@ def make_token(decimals=6):
     token.web3.eth.wait_for_transaction_receipt.return_value = {"status": 1}
     token.contract.functions.approve.return_value.build_transaction.return_value = {}
     token.contract.functions.transfer.return_value.build_transaction.return_value = {}
+    token.contract.events.Approval.return_value.process_receipt.return_value = [
+        {
+            "address": "token",
+            "args": {
+                "owner": "account",
+                "spender": "destination",
+                "value": 123456789123456,
+            },
+        }
+    ]
+    token.contract.events.Transfer.return_value.process_receipt.return_value = [
+        {
+            "address": "token",
+            "args": {
+                "from": "account",
+                "to": "destination",
+                "value": 123456789123456,
+            },
+        }
+    ]
     return token
 
 
