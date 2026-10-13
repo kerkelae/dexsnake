@@ -27,18 +27,38 @@ Install the package and development dependencies in your environment:
    python -m pip install -e .
    python -m pip install -r requirements-dev.txt
 
-Install `Anvil <https://getfoundry.sh/getting-started/installation/>`_ and set
-the environment variable ``WEB3_RPC_URL`` to an Ethereum mainnet RPC that can
-read block 20,000,000. The fork tests send transactions only to local Anvil.
+For the fork tests, install `Anvil <https://getfoundry.sh/getting-started/installation/>`_
+and set the environment variable ``WEB3_RPC_URL`` to an Ethereum mainnet RPC
+that can read block 20,000,000. The fork tests send transactions only to local
+Anvil.
 
 Tests
 -----
 
-After making changes, check them by running:
+Run the offline tests without Anvil or an RPC URL:
+
+.. code-block:: console
+
+   python -m pytest -m "not fork"
+
+Run the fork tests after installing Anvil and setting ``WEB3_RPC_URL`` as described
+above:
+
+.. code-block:: console
+
+   python -m pytest -m fork
+
+The full test suite includes both groups and therefore also requires Anvil and the
+archive RPC:
 
 .. code-block:: console
 
    python -m pytest
+
+Check style before submitting changes:
+
+.. code-block:: console
+
    python -m ruff check .
    python -m ruff format --check .
 
