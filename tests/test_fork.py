@@ -272,3 +272,66 @@ def test_v3_swap_for_exact_output(fork_state):
     weth_after = weth.balance_of(account.address)
     assert weth_before - amount_in_max <= weth_after < weth_before
     assert usdc.balance_of(account.address) == usdc_before + amount_out
+
+
+@pytest.mark.parametrize("version", ["v2", "v3"])
+@pytest.mark.parametrize(
+    "failure", ["expired_deadline", "minimum_output", "maximum_input"]
+)
+def test_failed_swap_preserves_token_balances(fork_state, version, failure):
+    web3, account = fork_state
+    weth = ERC20Token(web3, WETH)
+    usdc = ERC20Token(web3, USDC)
+    router = UniswapV2Router(web3) if version == "v2" else UniswapV3Router(web3)
+    approval = weth.approve(router.contract.address, Decimal("0.01"), account.key.hex())
+    assert approval["status"] == 1
+    weth_before = weth.balance_of(account.address)
+    usdc_before = usdc.balance_of(account.address)
+
+    deadline = web3.eth.get_block("latest")["timestamp"]
+    if failure == "expired_deadline":
+        deadline -= 1
+    else:
+        deadline += 300
+
+    # A fixed limit lets Anvil mine the revert instead of rejecting gas estimation.
+    common = {"private_key": account.key.hex(), "deadline": deadline, "gas": 500_000}
+    if failure == "maximum_input":
+        amounts = {"amount_out": Decimal("1"), "amount_in_max": Decimal("0.00001")}
+        method = (
+            router.swap_tokens_for_exact_tokens
+            if version == "v2"
+            else router.exact_output_single
+        )
+    else:
+        amounts = {
+            "amount_in": Decimal("0.01"),
+            "amount_out_min": (
+                Decimal("1000000") if failure == "minimum_output" else Decimal("0.01")
+            ),
+        }
+        method = (
+            router.swap_exact_tokens_for_tokens
+            if version == "v2"
+            else router.exact_input_single
+        )
+
+    if version == "v2":
+        route = {"path": [WETH, USDC], "to": account.address}
+    else:
+        route = {
+            "token_in": WETH,
+            "token_out": USDC,
+            "fee": 500,
+            "recipient": account.address,
+        }
+
+    with pytest.raises(
+        RuntimeError, match=r"^Transaction 0x[0-9a-f]+ failed$"
+    ) as error:
+        method(**amounts, **route, **common)
+
+    tx_hash = str(error.value).split()[1]
+    assert web3.eth.get_transaction_receipt(tx_hash)["status"] == 0
+    assert weth.balance_of(account.address) == weth_before
+    assert usdc.balance_of(account.address) == usdc_before
