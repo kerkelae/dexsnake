@@ -4,6 +4,11 @@
 # list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import os
+import tomllib
+from datetime import date
+from pathlib import Path
+
 from docutils import nodes
 
 # -- Path setup --------------------------------------------------------------
@@ -20,11 +25,18 @@ from docutils import nodes
 # -- Project information -----------------------------------------------------
 
 project = "Dexsnake"
-copyright = "2024, Leevi Kerkelä"
+copyright = f"2024–{date.today().year}, Leevi Kerkelä"
 author = "Leevi Kerkelä"
 
-# The full version, including alpha/beta/rc tags
-# release = "0.0.1"
+release = tomllib.loads(
+    (Path(__file__).resolve().parents[2] / "pyproject.toml").read_text(encoding="utf-8")
+)["project"]["version"]
+docs_channel = os.environ.get("READTHEDOCS_VERSION")
+version_label = f"v{release}"
+if docs_channel == "latest":
+    version_label += " (development)"
+elif docs_channel == "stable":
+    version_label += " (stable)"
 
 
 # -- General configuration ---------------------------------------------------
@@ -60,6 +72,7 @@ html_static_path = ["_static"]
 html_logo = "_static/dexsnake_logo.png"
 
 html_theme_options = {
+    "announcement": f"{project} {version_label} documentation",
     "sidebar_hide_name": True,
     "light_css_variables": {
         "font-stack": "Ubuntu",
